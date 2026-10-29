@@ -200,7 +200,19 @@ struct SettingsSheet: View {
                 Spacer()
             }
 
-            Text("Breeze-TTS-2.cpp · Universal Binary · macOS \(DeviceInfo.osVersionString)")
+            VStack(alignment: .leading, spacing: 3) {
+                Text("仅供个人学习、研究与自用")
+                    .font(.system(size: 11, weight: .medium))
+                Text("请勿用于违法用途，或未经授权克隆他人声音；公开发布 AI 生成音频请依法标识，生成内容由你自行负责。本项目按「现状」提供，不附带任何担保。若认为本项目侵犯你的权益，请通过仓库 Issues 告知，核实后及时下架。")
+                    .font(.system(size: 9.5))
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .padding(10)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(RoundedRectangle(cornerRadius: 10, style: .continuous).fill(Theme.faintFill))
+
+            Text("Breeze-TTS-2.cpp · arm64 · macOS \(DeviceInfo.osVersionString)")
                 .font(.system(size: 9.5))
                 .foregroundStyle(.tertiary)
         }
