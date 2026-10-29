@@ -1,0 +1,485 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		073D7806D7A3E0218A53E523 /* AppModel.swift in Sources/Frameworks */ = {isa = PBXBuildFile; fileRef = C2268CA10E372437111C6DDB /* AppModel.swift */; };
+		27A7394967A07036C4B97439 /* AppSettings.swift in Sources/Frameworks */ = {isa = PBXBuildFile; fileRef = 556185DB3402D98593839426 /* AppSettings.swift */; };
+		6FD6924BC51D9DBFE6F2CCCF /* DeviceInfo.swift in Sources/Frameworks */ = {isa = PBXBuildFile; fileRef = 56ED23556976BBAF6404C66F /* DeviceInfo.swift */; };
+		C20CD1D78D52B29FBA03D496 /* GenerationEstimator.swift in Sources/Frameworks */ = {isa = PBXBuildFile; fileRef = 7692FFFD3B8E8AFDC69F1332 /* GenerationEstimator.swift */; };
+		2F97D2457C1E7BCC7CC24DA3 /* ModelCatalog.swift in Sources/Frameworks */ = {isa = PBXBuildFile; fileRef = F4017E8876AAA7FC862DB779 /* ModelCatalog.swift */; };
+		E8F18ADCFD735D577BF70121 /* ModelSelection.swift in Sources/Frameworks */ = {isa = PBXBuildFile; fileRef = 58926C7AE4777B3B68D85FEF /* ModelSelection.swift */; };
+		25698478B6DCBC81685FB1DC /* Paths.swift in Sources/Frameworks */ = {isa = PBXBuildFile; fileRef = 875675071D6474CEF2709648 /* Paths.swift */; };
+		CE7F346CD992CCA5CF9A452B /* VoiceStyles.swift in Sources/Frameworks */ = {isa = PBXBuildFile; fileRef = 306F8AB154BB0E366B7A9F0F /* VoiceStyles.swift */; };
+		66DBE4E7A1F44528E84B621C /* BreezeBridge.mm in Sources/Frameworks */ = {isa = PBXBuildFile; fileRef = 2D89ED8FB02C9B7FA808A8B0 /* BreezeBridge.mm */; };
+		215222540F6AA2C70D051317 /* AudioPlayer.swift in Sources/Frameworks */ = {isa = PBXBuildFile; fileRef = 517EEF778271CEC19FE7382A /* AudioPlayer.swift */; };
+		FB224D9C6820361F4A8AEAC6 /* ExportService.swift in Sources/Frameworks */ = {isa = PBXBuildFile; fileRef = 83D68B51ED45EA17155058F7 /* ExportService.swift */; };
+		05BF7FA9DC48F2B911B7B888 /* ModelDownloader.swift in Sources/Frameworks */ = {isa = PBXBuildFile; fileRef = 11B2BB7FEE637148732EC4AA /* ModelDownloader.swift */; };
+		A588703270DE2452CCA68336 /* PlaybackService.swift in Sources/Frameworks */ = {isa = PBXBuildFile; fileRef = 6265CE6F3F9E7FA6ACBA58D6 /* PlaybackService.swift */; };
+		8AEFCAEB418E49D181FF4BB4 /* SpeechEngine.swift in Sources/Frameworks */ = {isa = PBXBuildFile; fileRef = 290F7B47DABED65D74D7409A /* SpeechEngine.swift */; };
+		A44F2E2AED934894341D23C0 /* SpeechTranscriber.swift in Sources/Frameworks */ = {isa = PBXBuildFile; fileRef = 37AB29B9F7B8316D609749EE /* SpeechTranscriber.swift */; };
+		E7177DBCBC7990C8827980E3 /* Stores.swift in Sources/Frameworks */ = {isa = PBXBuildFile; fileRef = D5C5042246CD07F074CA6CAE /* Stores.swift */; };
+		7A208F8448E953278F696C8B /* VoiceRecorder.swift in Sources/Frameworks */ = {isa = PBXBuildFile; fileRef = 545F820E606B300230F477D7 /* VoiceRecorder.swift */; };
+		2628998F835014DBFA1A6BB4 /* Models.swift in Sources/Frameworks */ = {isa = PBXBuildFile; fileRef = BDD1DF622D445AAA07F58A9B /* Models.swift */; };
+		458B31CCDEC0E780D81D6601 /* DesignSystem.swift in Sources/Frameworks */ = {isa = PBXBuildFile; fileRef = 8DD72C9F2D720561C6013D97 /* DesignSystem.swift */; };
+		D36525D68C555A050A32C0FF /* HistorySheet.swift in Sources/Frameworks */ = {isa = PBXBuildFile; fileRef = 2B88504E42E60F5A0A9A0563 /* HistorySheet.swift */; };
+		7EE4764FB56A4D9A30348924 /* MainView.swift in Sources/Frameworks */ = {isa = PBXBuildFile; fileRef = 1A9C1F4EBA9B961CA8FAD7BF /* MainView.swift */; };
+		F43DAE4D69E856DFBB4C4EA3 /* ModelManagerSheet.swift in Sources/Frameworks */ = {isa = PBXBuildFile; fileRef = FF02DB68019FD1751FBE3529 /* ModelManagerSheet.swift */; };
+		F05E90E5D793E8F33EBDA91A /* OnboardingView.swift in Sources/Frameworks */ = {isa = PBXBuildFile; fileRef = BA47D685E9441FAE26BA6FE1 /* OnboardingView.swift */; };
+		64CF89F13EBC98F203AE83F9 /* RecorderSheet.swift in Sources/Frameworks */ = {isa = PBXBuildFile; fileRef = A811520F10FCBB42D37BF470 /* RecorderSheet.swift */; };
+		27DED2519178185AA99600AC /* SettingsSheet.swift in Sources/Frameworks */ = {isa = PBXBuildFile; fileRef = 30C1D96686676B6A6E4CD69A /* SettingsSheet.swift */; };
+		5453B6BE7410BF27528C9523 /* VoiceMenu.swift in Sources/Frameworks */ = {isa = PBXBuildFile; fileRef = 129EF9F6191CFD0A71BBA84A /* VoiceMenu.swift */; };
+		59E82B3B75D3151ACCA52981 /* VoiceSheet.swift in Sources/Frameworks */ = {isa = PBXBuildFile; fileRef = 04EBFABA2260023AB9FED754 /* VoiceSheet.swift */; };
+		9BA6686471FC066DAB023909 /* App.swift in Sources/Frameworks */ = {isa = PBXBuildFile; fileRef = ED94E37716A9D2BEE32DC6E5 /* App.swift */; };
+		F06BD558D87830FFA7369C89 /* Headless.swift in Sources/Frameworks */ = {isa = PBXBuildFile; fileRef = 4018E23ED97043D1552D8934 /* Headless.swift */; };
+		7514A4D03C3A6B2671EA236A /* libbreeze.dylib in Sources/Frameworks */ = {isa = PBXBuildFile; fileRef = 70CA608E64A5FA4960938C90 /* libbreeze.dylib */; };
+		1200B54AF519447B47F42E00 /* AppIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9818E583D8B65A339E365E5F /* AppIcon.icns */; };
+		37B7C93D372D4BF48CEA241A /* IconDark.png in Resources */ = {isa = PBXBuildFile; fileRef = 31EBEE7A2EBBF3DAEE73DE36 /* IconDark.png */; };
+		2A17B404B6F9179FCE314657 /* IconLight.png in Resources */ = {isa = PBXBuildFile; fileRef = 06C8FB9D2C479B54B2C8220D /* IconLight.png */; };
+		B3C8377E26CBBD939494E722 /* preset-voices.json in Resources */ = {isa = PBXBuildFile; fileRef = 1906608B02AB60488B12B6BA /* preset-voices.json */; };
+		93894B21EE0751C95555C177 /* libbreeze.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 70CA608E64A5FA4960938C90 /* libbreeze.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		0FCE7460671A9118E8ECE9D0 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				93894B21EE0751C95555C177 /* libbreeze.dylib in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		C2268CA10E372437111C6DDB /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppModel.swift"; sourceTree = "<group>"; };
+		556185DB3402D98593839426 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppSettings.swift"; sourceTree = "<group>"; };
+		56ED23556976BBAF6404C66F /* DeviceInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DeviceInfo.swift"; sourceTree = "<group>"; };
+		7692FFFD3B8E8AFDC69F1332 /* GenerationEstimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GenerationEstimator.swift"; sourceTree = "<group>"; };
+		F4017E8876AAA7FC862DB779 /* ModelCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ModelCatalog.swift"; sourceTree = "<group>"; };
+		58926C7AE4777B3B68D85FEF /* ModelSelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ModelSelection.swift"; sourceTree = "<group>"; };
+		875675071D6474CEF2709648 /* Paths.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Paths.swift"; sourceTree = "<group>"; };
+		306F8AB154BB0E366B7A9F0F /* VoiceStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VoiceStyles.swift"; sourceTree = "<group>"; };
+		2D89ED8FB02C9B7FA808A8B0 /* BreezeBridge.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "BreezeBridge.mm"; sourceTree = "<group>"; };
+		517EEF778271CEC19FE7382A /* AudioPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AudioPlayer.swift"; sourceTree = "<group>"; };
+		83D68B51ED45EA17155058F7 /* ExportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ExportService.swift"; sourceTree = "<group>"; };
+		11B2BB7FEE637148732EC4AA /* ModelDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ModelDownloader.swift"; sourceTree = "<group>"; };
+		6265CE6F3F9E7FA6ACBA58D6 /* PlaybackService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PlaybackService.swift"; sourceTree = "<group>"; };
+		290F7B47DABED65D74D7409A /* SpeechEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SpeechEngine.swift"; sourceTree = "<group>"; };
+		37AB29B9F7B8316D609749EE /* SpeechTranscriber.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SpeechTranscriber.swift"; sourceTree = "<group>"; };
+		D5C5042246CD07F074CA6CAE /* Stores.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Stores.swift"; sourceTree = "<group>"; };
+		545F820E606B300230F477D7 /* VoiceRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VoiceRecorder.swift"; sourceTree = "<group>"; };
+		BDD1DF622D445AAA07F58A9B /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Models.swift"; sourceTree = "<group>"; };
+		8DD72C9F2D720561C6013D97 /* DesignSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DesignSystem.swift"; sourceTree = "<group>"; };
+		2B88504E42E60F5A0A9A0563 /* HistorySheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HistorySheet.swift"; sourceTree = "<group>"; };
+		1A9C1F4EBA9B961CA8FAD7BF /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MainView.swift"; sourceTree = "<group>"; };
+		FF02DB68019FD1751FBE3529 /* ModelManagerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ModelManagerSheet.swift"; sourceTree = "<group>"; };
+		BA47D685E9441FAE26BA6FE1 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OnboardingView.swift"; sourceTree = "<group>"; };
+		A811520F10FCBB42D37BF470 /* RecorderSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RecorderSheet.swift"; sourceTree = "<group>"; };
+		30C1D96686676B6A6E4CD69A /* SettingsSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SettingsSheet.swift"; sourceTree = "<group>"; };
+		129EF9F6191CFD0A71BBA84A /* VoiceMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VoiceMenu.swift"; sourceTree = "<group>"; };
+		04EBFABA2260023AB9FED754 /* VoiceSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VoiceSheet.swift"; sourceTree = "<group>"; };
+		ED94E37716A9D2BEE32DC6E5 /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "App.swift"; sourceTree = "<group>"; };
+		4018E23ED97043D1552D8934 /* Headless.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Headless.swift"; sourceTree = "<group>"; };
+		E4A1EBF43C8FBAEF88E5C921 /* BreezeBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "BreezeBridge.h"; sourceTree = "<group>"; };
+		C07BCDC4B0ABB12ACB4BB478 /* BreezeTTS-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "BreezeTTS-Bridging-Header.h"; sourceTree = "<group>"; };
+		9818E583D8B65A339E365E5F /* AppIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = "AppIcon.icns"; sourceTree = "<group>"; };
+		31EBEE7A2EBBF3DAEE73DE36 /* IconDark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "IconDark.png"; sourceTree = "<group>"; };
+		06C8FB9D2C479B54B2C8220D /* IconLight.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "IconLight.png"; sourceTree = "<group>"; };
+		1906608B02AB60488B12B6BA /* preset-voices.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "preset-voices.json"; sourceTree = "<group>"; };
+		91C0606910F43FEE0829F2DC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info.plist"; sourceTree = "<group>"; };
+		70CA608E64A5FA4960938C90 /* libbreeze.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = "libbreeze.dylib"; sourceTree = "<group>"; };
+		68831B3DC2B7D10723169D4A /* breeze.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "breeze.h"; sourceTree = "<group>"; };
+		F5BF48AA40CAD7891EB709FC /* BreezeTTS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "BreezeTTS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		349B578E88FC623128D2018B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7514A4D03C3A6B2671EA236A /* libbreeze.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		5CB925814CB9D325B98F666D /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				9818E583D8B65A339E365E5F,
+				31EBEE7A2EBBF3DAEE73DE36,
+				06C8FB9D2C479B54B2C8220D,
+				1906608B02AB60488B12B6BA,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		2A44C54E23411059C3A1A1E1 = {
+			isa = PBXGroup;
+			children = (
+				3F0DEFF5F9073BC38CB3D2AA /* BreezeTTS */,
+				6AEC9ED4734367DFF1ED75A7 /* Vendor */,
+				C7FC547C030796755CAF290C /* Frameworks */,
+				433D647A17039DC680DEAE8F /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		3F0DEFF5F9073BC38CB3D2AA /* BreezeTTS */ = {
+			isa = PBXGroup;
+			children = (
+				ED94E37716A9D2BEE32DC6E5,
+				4018E23ED97043D1552D8934,
+				0ADB5386121963586531221C,
+				B39F8459D4CC5379E2F09D09,
+				E89B5B5A24F293001B3BCA49,
+				CE48F0BFB0FEE3B01A00F29C,
+				A0004FF863A3A25ECD78A06F,
+				5CB925814CB9D325B98F666D,
+				91C0606910F43FEE0829F2DC /* Info.plist */,
+			);
+			path = BreezeTTS;
+			sourceTree = "<group>";
+		};
+		0ADB5386121963586531221C /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				C2268CA10E372437111C6DDB,
+				556185DB3402D98593839426,
+				56ED23556976BBAF6404C66F,
+				7692FFFD3B8E8AFDC69F1332,
+				F4017E8876AAA7FC862DB779,
+				58926C7AE4777B3B68D85FEF,
+				875675071D6474CEF2709648,
+				306F8AB154BB0E366B7A9F0F,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		B39F8459D4CC5379E2F09D09 /* Bridge */ = {
+			isa = PBXGroup;
+			children = (
+				2D89ED8FB02C9B7FA808A8B0,
+				E4A1EBF43C8FBAEF88E5C921,
+				C07BCDC4B0ABB12ACB4BB478,
+			);
+			path = Bridge;
+			sourceTree = "<group>";
+		};
+		E89B5B5A24F293001B3BCA49 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				517EEF778271CEC19FE7382A,
+				83D68B51ED45EA17155058F7,
+				11B2BB7FEE637148732EC4AA,
+				6265CE6F3F9E7FA6ACBA58D6,
+				290F7B47DABED65D74D7409A,
+				37AB29B9F7B8316D609749EE,
+				D5C5042246CD07F074CA6CAE,
+				545F820E606B300230F477D7,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		CE48F0BFB0FEE3B01A00F29C /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				BDD1DF622D445AAA07F58A9B,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		A0004FF863A3A25ECD78A06F /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				8DD72C9F2D720561C6013D97,
+				2B88504E42E60F5A0A9A0563,
+				1A9C1F4EBA9B961CA8FAD7BF,
+				FF02DB68019FD1751FBE3529,
+				BA47D685E9441FAE26BA6FE1,
+				A811520F10FCBB42D37BF470,
+				30C1D96686676B6A6E4CD69A,
+				129EF9F6191CFD0A71BBA84A,
+				04EBFABA2260023AB9FED754,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		6AEC9ED4734367DFF1ED75A7 /* Vendor */ = {
+			isa = PBXGroup;
+			children = (
+				70CA608E64A5FA4960938C90 /* libbreeze.dylib */,
+				68831B3DC2B7D10723169D4A /* breeze.h */,
+			);
+			path = Vendor;
+			sourceTree = "<group>";
+		};
+		C7FC547C030796755CAF290C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		433D647A17039DC680DEAE8F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F5BF48AA40CAD7891EB709FC /* BreezeTTS.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		42AEFBAE01D2DFD981F7DA7D /* BreezeTTS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 009BCBF0C85A9D3AD30F8EB7 /* Build configuration list for PBXNativeTarget "BreezeTTS" */;
+			buildPhases = (
+				F3F3D267CF0FD5307403D537 /* Sources */,
+				349B578E88FC623128D2018B /* Frameworks */,
+				41B260B1D2A5E0B273280C8E /* Resources */,
+				0FCE7460671A9118E8ECE9D0 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BreezeTTS;
+			productName = BreezeTTS;
+			productReference = F5BF48AA40CAD7891EB709FC /* BreezeTTS.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		46F86FAA6BBF9AC94A7E4595 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1600;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					42AEFBAE01D2DFD981F7DA7D = {
+						CreatedOnToolsVersion = 16.0;
+					};
+				};
+			};
+			buildConfigurationList = 938CBF74E81D18A798197C2C /* Build configuration list for PBXProject "BreezeTTS" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = zh_CN;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+				"zh-Hans",
+			);
+			mainGroup = 2A44C54E23411059C3A1A1E1;
+			productRefGroup = 433D647A17039DC680DEAE8F /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				42AEFBAE01D2DFD981F7DA7D /* BreezeTTS */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		41B260B1D2A5E0B273280C8E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1200B54AF519447B47F42E00 /* AppIcon.icns in Resources */,
+				37B7C93D372D4BF48CEA241A /* IconDark.png in Resources */,
+				2A17B404B6F9179FCE314657 /* IconLight.png in Resources */,
+				B3C8377E26CBBD939494E722 /* preset-voices.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F3F3D267CF0FD5307403D537 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				073D7806D7A3E0218A53E523 /* AppModel.swift in Sources */,
+				27A7394967A07036C4B97439 /* AppSettings.swift in Sources */,
+				6FD6924BC51D9DBFE6F2CCCF /* DeviceInfo.swift in Sources */,
+				C20CD1D78D52B29FBA03D496 /* GenerationEstimator.swift in Sources */,
+				2F97D2457C1E7BCC7CC24DA3 /* ModelCatalog.swift in Sources */,
+				E8F18ADCFD735D577BF70121 /* ModelSelection.swift in Sources */,
+				25698478B6DCBC81685FB1DC /* Paths.swift in Sources */,
+				CE7F346CD992CCA5CF9A452B /* VoiceStyles.swift in Sources */,
+				66DBE4E7A1F44528E84B621C /* BreezeBridge.mm in Sources */,
+				215222540F6AA2C70D051317 /* AudioPlayer.swift in Sources */,
+				FB224D9C6820361F4A8AEAC6 /* ExportService.swift in Sources */,
+				05BF7FA9DC48F2B911B7B888 /* ModelDownloader.swift in Sources */,
+				A588703270DE2452CCA68336 /* PlaybackService.swift in Sources */,
+				8AEFCAEB418E49D181FF4BB4 /* SpeechEngine.swift in Sources */,
+				A44F2E2AED934894341D23C0 /* SpeechTranscriber.swift in Sources */,
+				E7177DBCBC7990C8827980E3 /* Stores.swift in Sources */,
+				7A208F8448E953278F696C8B /* VoiceRecorder.swift in Sources */,
+				2628998F835014DBFA1A6BB4 /* Models.swift in Sources */,
+				458B31CCDEC0E780D81D6601 /* DesignSystem.swift in Sources */,
+				D36525D68C555A050A32C0FF /* HistorySheet.swift in Sources */,
+				7EE4764FB56A4D9A30348924 /* MainView.swift in Sources */,
+				F43DAE4D69E856DFBB4C4EA3 /* ModelManagerSheet.swift in Sources */,
+				F05E90E5D793E8F33EBDA91A /* OnboardingView.swift in Sources */,
+				64CF89F13EBC98F203AE83F9 /* RecorderSheet.swift in Sources */,
+				27DED2519178185AA99600AC /* SettingsSheet.swift in Sources */,
+				5453B6BE7410BF27528C9523 /* VoiceMenu.swift in Sources */,
+				59E82B3B75D3151ACCA52981 /* VoiceSheet.swift in Sources */,
+				9BA6686471FC066DAB023909 /* App.swift in Sources */,
+				F06BD558D87830FFA7369C89 /* Headless.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		9532DD524F487496C8A03735 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_SWIFT_FLAGS = "-disable-sandbox";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		82BAFC0BCB9B7722A9AF8F69 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				OTHER_SWIFT_FLAGS = "-disable-sandbox";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		18FBDB88B4FFF8D547341822 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_APP_SANDBOX = NO;
+				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/Vendor/include",
+				);
+				INFOPLIST_FILE = BreezeTTS/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(SRCROOT)/Vendor",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.breezespeak.lite;
+				PRODUCT_NAME = "BreezeTTS Lite";
+				SWIFT_OBJC_BRIDGING_HEADER = "BreezeTTS/Bridge/BreezeTTS-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				ARCHS = arm64;
+				ONLY_ACTIVE_ARCH = YES;
+			};
+			name = Debug;
+		};
+		7D1E7E3BB479E6BE557E824A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_APP_SANDBOX = NO;
+				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/Vendor/include",
+				);
+				INFOPLIST_FILE = BreezeTTS/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(SRCROOT)/Vendor",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.breezespeak.lite;
+				PRODUCT_NAME = "BreezeTTS Lite";
+				SWIFT_OBJC_BRIDGING_HEADER = "BreezeTTS/Bridge/BreezeTTS-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				ARCHS = arm64;
+				ONLY_ACTIVE_ARCH = NO;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		938CBF74E81D18A798197C2C /* Build configuration list for PBXProject "BreezeTTS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9532DD524F487496C8A03735 /* Debug */,
+				82BAFC0BCB9B7722A9AF8F69 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		009BCBF0C85A9D3AD30F8EB7 /* Build configuration list for PBXNativeTarget "BreezeTTS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				18FBDB88B4FFF8D547341822 /* Debug */,
+				7D1E7E3BB479E6BE557E824A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+	};
+	rootObject = 46F86FAA6BBF9AC94A7E4595 /* Project object */;
+}

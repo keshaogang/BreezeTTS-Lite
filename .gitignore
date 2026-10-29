@@ -1,0 +1,35 @@
+# Build products & local artifacts
+build/
+build-static/
+dist/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+.DS_Store
+
+# SwiftPM / Xcode transient
+*.xcresult
+*.ipa
+*.dSYM.zip
+
+# Local engine build intermediates (Vendor dylib IS committed)
+*.o
+*.obj
+
+# 打包产物（DMG 走 Releases，不进仓库）
+dmg-src/
+*.pkg
+*.dmg
+/ios-tmp/
+
+# 引擎预编译工具链，约 57 MB，精简版不依赖
+Vendor/llama-bin/
+
+# llama.cpp 的构建输出（体积大，且精简版不用）
+/tools/llama-build/
+
+# 完整版的 iPhone 唤醒 helper，精简版已移除
+/tools/helper/
+
+# 根目录的验收 / 临时截图，README 用的图在 docs/screens/
+/*.png

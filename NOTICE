@@ -1,0 +1,17 @@
+BreezeTTS Lite
+Copyright 2026 BreezeTTS Lite Contributors
+
+This product includes software developed at:
+
+  Breeze-TTS-2.cpp  —  https://github.com/HoppouAI/Breeze-TTS-2.cpp
+  Copyright 2026 HoppouAI
+  Licensed under the Apache License, Version 2.0.
+  The original license text is retained at Breeze-TTS-2.Cpp/LICENSE.
+
+  llama.cpp (as a dependency of the above)
+  Copyright (c) 2023-2026 The ggml authors
+  Licensed under the MIT License.
+
+Model weights are NOT distributed in this repository. They are downloaded at
+runtime from third-party hosts and remain subject to their own licenses and
+terms of use. See DISCLAIMER.md for details.
