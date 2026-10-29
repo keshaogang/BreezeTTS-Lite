@@ -16,6 +16,20 @@
 
 ![主界面](docs/screens/lite-main.png)
 
+## 下载安装
+
+不想自己编译，直接下 DMG：
+
+**[⬇︎ 下载 BreezeTTS-Lite-1.0-arm64.dmg（约 4.6 MB）](https://github.com/keshaogang/BreezeTTS-Lite/releases/download/v1.0/BreezeTTS-Lite-1.0-arm64.dmg)**
+
+1. 打开 DMG，把 `BreezeTTS Lite.app` 拖进「应用程序」。
+2. 首次打开若提示「无法验证开发者」→ 右键 App → 打开；若提示「已损坏」→ 终端执行
+   `xattr -cr "/Applications/BreezeTTS Lite.app"`。（未做 Apple 公证，属正常现象）
+3. 首次启动引导页选一个模型档位下载（Q8_0 约 3.6 GB；8 GB 内存建议 Q4_K），下完即可全程离线。
+
+模型权重不随仓库分发，需在应用内下载。全部数据都在 `~/Library/Application Support/BreezeTTS Lite`，
+卸载时删掉该目录即可。
+
 ## 系统要求
 
 | 项目 | 要求 |
