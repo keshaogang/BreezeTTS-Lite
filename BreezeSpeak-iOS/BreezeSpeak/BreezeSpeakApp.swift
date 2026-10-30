@@ -38,6 +38,9 @@ struct BreezeSpeakApp: App {
             .environmentObject(environment.player)
             .environmentObject(environment.memory)
             .tint(Palette.accent)
+            // 内容区之外（键盘上方、窗口拉伸时）不留白：先铺一层画布色，再把窗口底色也刷同色
+            .background(Theme.canvas.ignoresSafeArea())
+            .canvasWindowBackground()
             .onChangeCompat(of: scenePhase) { _, newPhase in
                 environment.handleScenePhase(newPhase)
             }

@@ -39,7 +39,7 @@
 
 免费证书 7 天过期，到期重跑一次即可；App 沙盒数据（模型、声纹、历史）不会丢。
 
-已在本机验证：arm64 真机编译 **0 error 0 warning**，Release 版可正常签名、安装并在 iPad 上启动。
+已在本机验证：arm64 真机编译 **0 error 0 warning**；签名环节因本机 Xcode 未登录任何 Apple ID 而无法由命令行自动完成（`error: No Accounts`）。
 
 命令行编译（本机已验证通过）：
 
