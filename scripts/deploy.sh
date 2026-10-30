@@ -1,7 +1,6 @@
 #!/bin/bash
 # deploy.sh — build (optional) → refresh dist → install to /Applications → relaunch.
-# /Applications/BreezeTTS.app is the ONE canonical location: the iPhone-wake
-# helper only ever opens that path, so every build must land there.
+# /Applications/BreezeTTS.app 是唯一安装位置，每次构建都要落到这里。
 set -e
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"

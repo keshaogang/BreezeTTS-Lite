@@ -1,36 +1,122 @@
-# Breeze TTS Lite for macOS
+# Breeze TTS
 
-原生 macOS 语音合成应用（精简版）。SwiftUI 界面 + Objective-C++ 桥 + Breeze-TTS-2.cpp 的 C++ 引擎，
-**没有 WebView、没有本地 HTTP 服务、没有浏览器**，推理全部在进程内完成，文本与音频都不上传。
-
-精简版相对完整版去掉了「对话」「听书」以及 iPhone 遥控，只保留「输入文字 → 生成语音 → 导出 WAV」
-和音色管理，体积更小、依赖更少。
+本地离线语音合成。**macOS 版 BreezeTTS Lite** 与 **iPad 版 BreezeSpeak** 共用同一套 GGUF 权重、
+同一份 C++ 推理核心（ggml + Metal）：没有 WebView、没有本地 HTTP 服务、没有账号，推理全部在设备内完成，
+文本与音频都不上传。
 
 - 引擎：[`HoppouAI/Breeze-TTS-2.cpp`](https://github.com/HoppouAI/Breeze-TTS-2.cpp)（Apache-2.0，Metal 后端）
-- 界面：SwiftUI，液态玻璃（macOS 26+）/ 毛玻璃（低版本自动降级）
-- 产物：arm64 `.app`，DMG 分发
+- 界面：SwiftUI，单色设计语言；液态玻璃（新系统）与毛玻璃两套外观可切换
+- 分发：macOS 走 DMG，iPad 走 IPA 或自行编译
 
 > ⚠️ **仅供个人学习、研究与自用。** 请勿用于违法用途或侵害他人权益（尤其是未经授权克隆他人声音）。
 > 本项目按「现状」提供、不附带担保，使用风险自负。详见 [DISCLAIMER.md](DISCLAIMER.md)。
 > 如有侵权请通过 Issues 告知，核实后 72 小时内下架。
 
-![主界面](docs/screens/lite-main.png)
+![macOS 主界面](docs/screens/lite-main.png)
 
-## 下载安装
+## 两个版本
 
-不想自己编译，直接下 DMG：
+| | macOS 版 | iPad 版 |
+| --- | --- | --- |
+| 名称 | BreezeTTS Lite | BreezeSpeak |
+| 系统 | macOS 12 Monterey 及以上 | iPadOS 16 及以上 |
+| 芯片 | Apple Silicon（M1 及以后） | Apple Silicon iPad |
+| 形态 | 独立窗口，一块书写面 + 悬浮工具栏 | 全屏，同一套信息架构，触屏适配 |
+| 分发 | DMG | IPA / 源码编译 |
 
-**[⬇︎ 下载 BreezeTTS-Lite-1.0-arm64.dmg（约 4.6 MB）](https://github.com/keshaogang/BreezeTTS-Lite/releases/download/v1.0/BreezeTTS-Lite-1.0-arm64.dmg)**
+## 下载
+
+| 平台 | 文件 |
+| --- | --- |
+| macOS | [`downloads/BreezeTTS-Lite-1.0-arm64.dmg`](downloads/BreezeTTS-Lite-1.0-arm64.dmg) |
+| iPad | [`downloads/BreezeSpeak-1.0-ipad-arm64.ipa`](downloads/BreezeSpeak-1.0-ipad-arm64.ipa) |
+
+也可以在 [Releases](https://github.com/keshaogang/BreezeTTS-Lite/releases) 页下载同一份文件。
+
+### macOS 安装
 
 1. 打开 DMG，把 `BreezeTTS Lite.app` 拖进「应用程序」。
 2. 首次打开若提示「无法验证开发者」→ 右键 App → 打开；若提示「已损坏」→ 终端执行
    `xattr -cr "/Applications/BreezeTTS Lite.app"`。（未做 Apple 公证，属正常现象）
 3. 首次启动引导页选一个模型档位下载（Q8_0 约 3.6 GB；8 GB 内存建议 Q4_K），下完即可全程离线。
 
-模型权重不随仓库分发，需在应用内下载。全部数据都在 `~/Library/Application Support/BreezeTTS Lite`，
-卸载时删掉该目录即可。
+### iPad 安装
 
-## 系统要求
+1. 用 Xcode 打开 `BreezeSpeak-iOS/BreezeSpeak.xcodeproj`，在 *Signing & Capabilities* 里选自己的 Team，
+   改一个唯一的 Bundle Identifier。
+2. 选中你的 iPad，按 `⌘R`。首次会提示注册设备，同意即可。
+3. 装完若提示「不受信任的开发者」，去 iPad `设置 → 通用 → VPN与设备管理` 信任对应证书；
+   若提示需要开发者模式，去 `设置 → 隐私与安全性 → 开发者模式` 打开并重启。
+
+`downloads/` 里的 IPA 是开发签名版，装到签名描述文件中登记过的设备即可使用，重新签名后同样能装。
+
+模型权重不随仓库分发，需在应用内下载。全部数据都落在各自的 App 沙盒 / 应用支持目录里，卸载应用即清除。
+
+---
+
+## 一、iPad 版 · 首次启动
+
+第一次打开会走四步，之后不再出现：
+
+| 介绍 | 使用须知 | 选择模型 | 开始使用 |
+| --- | --- | --- | --- |
+| ![](docs/screens/ipad-welcome.png) | ![](docs/screens/ipad-disclaimer.png) | ![](docs/screens/ipad-model.png) | ![](docs/screens/ipad-ready.png) |
+
+1. **介绍**：应用做什么、数据去了哪里，三句话说清。
+2. **使用须知**：五条免责条款，必须勾选同意才能继续；不同意则退出应用。条款版本会记录，将来改条款时只重过这一页。
+3. **选择模型**：Q4_K / Q6_K / Q8_0 三档，标出本机推荐项与已下载状态；支持断点续传、随时暂停，也可以先跳过稍后下载。
+4. **开始使用**：三条操作提示（怎么写停顿、怎么点生成、文件存哪儿），点「进入 BreezeSpeak」即进入主界面。
+
+中断在任意一步都没关系：下次打开会接着走，已经同意过的协议不会重复要求。
+
+### 系统要求
+
+| 项目 | 要求 |
+| --- | --- |
+| 设备 | Apple Silicon iPad（M1 / M2 / M3 / M4 / M5 及以后） |
+| 系统 | iPadOS 16.0 及以上 |
+| 内存 | 8 GB 可跑 Q4_K；16 GB 及以上推荐 Q8_0 |
+| 磁盘 | 首次需下载 2.4–3.3 GB 模型，建议留 4 GB 以上 |
+
+### 界面
+
+主界面是一块书写面加一条悬浮工具栏：声线、历史、模型、设置全部收进弹窗，写作时不堆面板。
+iOS 26 起工具栏与弹窗使用系统的液态玻璃材质；**设置 → 外观** 里有「液态玻璃」开关，
+关掉即退回毛玻璃，深色背景下更实、更安静。低版本系统默认就是毛玻璃外观。
+
+其余细节见 [`BreezeSpeak-iOS/README.md`](BreezeSpeak-iOS/README.md)：引擎接入、音色映射、分段策略、目录结构。
+
+### 从源码编译
+
+```bash
+cd BreezeSpeak-iOS
+
+xcodebuild -project BreezeSpeak.xcodeproj -scheme BreezeSpeak \
+  -configuration Release -destination 'generic/platform=iOS' \
+  -derivedDataPath build build
+# 产物：build/Build/Products/Release-iphoneos/BreezeSpeak.app
+
+# 打成 IPA
+mkdir -p /tmp/ipa/Payload
+cp -R build/Build/Products/Release-iphoneos/BreezeSpeak.app /tmp/ipa/Payload/
+cd /tmp/ipa && zip -qry BreezeSpeak.ipa Payload
+```
+
+若宿主机 shell 处于受限沙箱，编译宏插件会报 `sandbox_apply: Operation not permitted`，
+追加 `OTHER_SWIFT_FLAGS='$(inherited) -Xfrontend -disable-sandbox'` 即可。
+
+---
+
+## 二、macOS 版
+
+原生 macOS 语音合成应用。SwiftUI 界面 + Objective-C++ 桥 + Breeze-TTS-2.cpp 的 C++ 引擎，
+推理全部在进程内完成，文本与音频都不上传。
+
+- 引擎：`HoppouAI/Breeze-TTS-2.cpp`（Apache-2.0，Metal 后端）
+- 界面：SwiftUI，液态玻璃（macOS 26+）/ 毛玻璃（低版本自动降级）
+- 产物：arm64 `.app`，DMG 分发
+
+### 系统要求
 
 | 项目 | 要求 |
 | --- | --- |
@@ -39,7 +125,7 @@
 | 内存 | 8 GB 可跑 Q4_K；16 GB 及以上推荐 Q8_0 |
 | 磁盘 | 首次需下载 2.5–3.6 GB 模型，建议留 4 GB 以上 |
 
-## 快速开始
+### 快速开始
 
 ```bash
 # 1. 引擎（产出 Vendor/libbreeze.dylib；仓库已带预编译版，可跳过）
@@ -71,7 +157,7 @@ ditto "build/lite/Build/Products/Release/BreezeTTS Lite.app" "dmg-src/BreezeTTS 
 hdiutil create -volname "BreezeTTS Lite" -srcfolder dmg-src -ov -format UDZO BreezeTTS-Lite.dmg
 ```
 
-## 数据目录
+### 数据目录
 
 模型、音色、历史、导出全部在：
 
@@ -87,28 +173,7 @@ hdiutil create -volname "BreezeTTS Lite" -srcfolder dmg-src -ov -format UDZO Bre
 
 与电脑上其他 BreezeTTS 完全隔离。删掉这个文件夹即回到「刚安装」的空白状态。
 
-## 选模策略
-
-| 档位 | 文件 | 峰值内存 | 说明 |
-| --- | --- | --- | --- |
-| F16 | 6.3 GB | ~7 GB | 听感上限，仅建议 24 GB 以上机器 |
-| Q8_0 | 3.6 GB | ~4 GB | 默认推荐，几乎听不出与 F16 的差别 |
-| Q6_K | 3.0 GB | ~3.5 GB | 体积与音质折中 |
-| Q4_K | 2.5 GB | ~3 GB | 内存最省，8 GB 机器推荐 |
-| Q8_0-dd2 / -dd4、Q4_K-dd2 | 2.5–3.4 GB | ~2.9–4 GB | 实验档，短句更快，长文本不建议 |
-
-引导页按本机内存推荐档位，也允许手动覆盖或导入任意 `.gguf`。
-
-## 音色
-
-- **文字生成**：一句话描述（性别、年龄、语速、情绪）直接生成音色
-- **音频克隆**：录 5–20 秒参考音频，按参考音色复刻；可再叠一段文字补充语气
-- 内置默认音色为中文成年女声，自然、无播音腔
-- 已有音色与已克隆音色都支持就地编辑
-
-![音色面板](docs/screens/lite-voices.png)
-
-## 命令行快照（开发用）
+### 命令行快照（开发用）
 
 打包里的 App 自带离线渲染入口，方便验收 UI，不需要真的打开窗口：
 
@@ -122,6 +187,29 @@ hdiutil create -volname "BreezeTTS Lite" -srcfolder dmg-src -ov -format UDZO Bre
 | screen | `main`、`onboarding-welcome`、`onboarding-model`、`onboarding-ready`、`voices`、`voices-edit`、`voices-empty`、`settings`、`models`、`voice-menu`、`recorder`、`running` |
 | `dark-` 前缀 | 渲染深色版本，例如 `dark-main`、`dark-voices` |
 | `--fresh` / `--fresh-empty` | 先清空本地数据再启动，模拟「刚下载第一次打开」；`-empty` 连内置音色也不种 |
+
+---
+
+## 三、选模策略（两版共用）
+
+| 档位 | macOS 文件 | 峰值内存 | 说明 |
+| --- | --- | --- | --- |
+| F16 | 6.3 GB | ~7 GB | 听感上限，仅建议 24 GB 以上机器 |
+| Q8_0 | 3.6 GB | ~4 GB | 默认推荐，几乎听不出与 F16 的差别 |
+| Q6_K | 3.0 GB | ~3.5 GB | 体积与音质折中 |
+| Q4_K | 2.5 GB | ~3 GB | 内存最省，8 GB 机器推荐 |
+| Q8_0-dd2 / -dd4、Q4_K-dd2 | 2.5–3.4 GB | ~2.9–4 GB | 实验档，短句更快，长文本不建议 |
+
+iPad 版暴露 Q4_K / Q6_K / Q8_0 三档。引导页按本机内存推荐档位，也允许手动覆盖；macOS 版还可导入任意 `.gguf`。
+
+## 四、音色（两版共用）
+
+- **文字生成**：一句话描述（性别、年龄、语速、情绪）直接生成音色
+- **音频克隆**：录 5–20 秒参考音频，按参考音色复刻；可再叠一段文字补充语气
+- 内置默认音色为中文成年女声，自然、无播音腔
+- 已有音色与已克隆音色都支持就地编辑
+
+![音色面板](docs/screens/lite-voices.png)
 
 ## 许可
 
@@ -142,6 +230,6 @@ hdiutil create -volname "BreezeTTS Lite" -srcfolder dmg-src -ov -format UDZO Bre
 
 ## 已知限制
 
-- 仅 arm64，Intel Mac 无法运行
-- 分发版为 ad-hoc 签名，首次打开需右键「打开」或在「隐私与安全性」里放行
+- 两版均为 Apple Silicon 专用，Intel Mac 无法运行
+- 分发版未做 Apple 公证 / 开发签名，首次打开需按上文放行
 - 长文本按语义分段合成，段与段之间使用同一随机种子以保证音色一致

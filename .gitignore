@@ -33,3 +33,11 @@ Vendor/llama-bin/
 
 # 根目录的验收 / 临时截图，README 用的图在 docs/screens/
 /*.png
+
+# 派生数据目录（Xcode 15+ 也有用 .build 的场景）
+.build/
+
+# 分发产物：DMG / IPA 直接放在仓库里，不依赖 GitHub Release 也能下载
+!downloads/
+!downloads/*.dmg
+!downloads/*.ipa
