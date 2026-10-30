@@ -19,15 +19,17 @@ struct BreezeSpeakApp: App {
             Group {
                 if onboarded {
                     RootView()
+                        .transition(.opacity.combined(with: .scale(scale: 1.01)))
                 } else {
                     // 协议已经同意过就从中断的下一步接着走
                     OnboardingFlow(startStep: OnboardingState.hasAcceptedDisclaimer ? 2 : 0) {
-                        withAnimation(.easeInOut(duration: 0.3)) {
+                        withAnimation(.spring(response: 0.5, dampingFraction: 0.9)) {
                             onboarded = true
                         }
                         environment.model.downloadIfNeeded()
                         environment.warmUp()
                     }
+                    .transition(.opacity.combined(with: .scale(scale: 0.985)))
                 }
             }
             .environmentObject(environment)

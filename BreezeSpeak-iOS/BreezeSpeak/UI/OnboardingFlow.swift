@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 struct OnboardingFlow: View {
     @EnvironmentObject private var env: AppEnvironment
@@ -17,6 +18,8 @@ struct OnboardingFlow: View {
 
     @State private var step: Int = 0
     @State private var accepted = false
+    /// 前进还是后退：决定切换时内容从那一边滑进来
+    @State private var forward = true
 
     /// 截图专用：ImageRenderer 渲染不出 ScrollView 里的内容，走查版式时
     /// 换成不退滚的 VStack。正常运行时始终为 false。
@@ -40,7 +43,7 @@ struct OnboardingFlow: View {
                 header
 
                 if snapshotMode {
-                    stepContent
+                    animatedStep
                         .padding(.horizontal, 28)
                         .padding(.top, 6)
                         .padding(.bottom, 28)
@@ -48,7 +51,7 @@ struct OnboardingFlow: View {
                         .frame(maxWidth: .infinity)
                 } else {
                     ScrollView(.vertical, showsIndicators: false) {
-                        stepContent
+                        animatedStep
                             .padding(.horizontal, 28)
                             .padding(.top, 6)
                             .padding(.bottom, 28)
@@ -75,6 +78,17 @@ struct OnboardingFlow: View {
         }
     }
 
+    /// 换步时旧内容向来路退出、新内容从前进方向浮入。
+    /// 用 offset 而不是 move：offset 不参与布局，不会把 ScrollView 的高度改来改去。
+    private var animatedStep: some View {
+        stepContent
+            .id(step)
+            .transition(.asymmetric(
+                insertion: .offset(y: forward ? 20 : -20).combined(with: .opacity),
+                removal: .offset(y: forward ? -14 : 14).combined(with: .opacity)
+            ))
+    }
+
     // MARK: - 顶栏
 
     private var header: some View {
@@ -90,6 +104,8 @@ struct OnboardingFlow: View {
                         .contentShape(Circle())
                 }
                 .buttonStyle(.plain)
+                .glassIconButton(size: 30)
+                .transition(.scale(scale: 0.6).combined(with: .opacity))
             }
 
             HStack(spacing: 6) {
@@ -131,6 +147,7 @@ struct OnboardingFlow: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
             .padding(.top, 18)
+            .staggerIn(0)
 
             VStack(spacing: 0) {
                 feature(icon: "waveform",
@@ -146,12 +163,14 @@ struct OnboardingFlow: View {
                         detail: "WAV 直接存进「文件」App，拿去剪辑或配音都行。")
             }
             .glassCard(cornerRadius: 20)
+            .staggerIn(1)
 
             Text("首次使用需要下载一次模型权重（约 2.4 GB）。下载完就可以断网使用，之后不再需要网络。")
                 .font(.system(size: 11))
                 .foregroundStyle(.tertiary)
                 .lineSpacing(3)
                 .fixedSize(horizontal: false, vertical: true)
+                .staggerIn(2, distance: 6)
         }
     }
 
@@ -197,6 +216,7 @@ struct OnboardingFlow: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
             .padding(.top, 16)
+            .staggerIn(0)
 
             VStack(alignment: .leading, spacing: 16) {
                 clause("仅限合法用途",
@@ -210,14 +230,22 @@ struct OnboardingFlow: View {
                 clause("侵权告知即下架",
                        "若权利人认为本项目侵犯其权益，可通过项目仓库的 Issues 提出并附权属证明，核实后 72 小时内下架。")
             }
+            .staggerIn(1)
 
             Button {
-                accepted.toggle()
+                withAnimation(.spring(response: 0.34, dampingFraction: 0.62)) {
+                    accepted.toggle()
+                }
+                UIImpactFeedbackGenerator(style: .light).impactOccurred()
             } label: {
                 HStack(alignment: .top, spacing: 10) {
                     Image(systemName: accepted ? "checkmark.square.fill" : "square")
                         .font(.system(size: 15, weight: .medium))
                         .foregroundStyle(accepted ? Color.primary : Color.primary.opacity(0.35))
+                        .rotationEffect(.degrees(accepted ? 0 : -10))
+                        .scaleEffect(accepted ? 1.12 : 1)
+                        .animation(.spring(response: 0.38, dampingFraction: 0.5), value: accepted)
+                        .bounceSymbol(accepted)
                     Text("我已阅读并同意以上条款，且知悉声音克隆须获得授权")
                         .font(.system(size: 12.5))
                         .foregroundStyle(.primary)
@@ -232,15 +260,20 @@ struct OnboardingFlow: View {
                     RoundedRectangle(cornerRadius: 14, style: .continuous)
                         .fill(accepted ? Theme.softFill : Theme.faintFill)
                 )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                        .strokeBorder(accepted ? Color.primary.opacity(0.16) : Color.clear, lineWidth: 0.8)
+                )
                 .contentShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
             }
             .buttonStyle(.plain)
-            .animation(.easeOut(duration: 0.16), value: accepted)
+            .staggerIn(2)
 
             Text("不同意以上条款请直接关闭应用。")
                 .font(.system(size: 10.5))
                 .foregroundStyle(.tertiary)
                 .padding(.bottom, 4)
+                .staggerIn(3, distance: 6)
         }
     }
 
@@ -270,19 +303,23 @@ struct OnboardingFlow: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
             .padding(.top, 16)
+            .staggerIn(0)
 
             VStack(spacing: 8) {
                 ForEach(ModelTiers.all) { tier in
                     tierRow(tier)
                 }
             }
+            .staggerIn(1)
 
             downloadPanel
+                .staggerIn(2)
 
             Text("下载支持断点续传，中途退出下次接着来。全部数据都在 App 沙盒内。")
                 .font(.system(size: 10.5))
                 .foregroundStyle(.tertiary)
                 .fixedSize(horizontal: false, vertical: true)
+                .staggerIn(3, distance: 6)
         }
     }
 
@@ -291,12 +328,16 @@ struct OnboardingFlow: View {
         let recommended = model.isRecommended(tier)
 
         return Button {
-            model.select(tierID: tier.id)
+            withAnimation(.spring(response: 0.32, dampingFraction: 0.8)) {
+                model.select(tierID: tier.id)
+            }
+            UISelectionFeedbackGenerator().selectionChanged()
         } label: {
             HStack(alignment: .top, spacing: 10) {
                 Image(systemName: selected ? "largecircle.fill.circle" : "circle")
                     .font(.system(size: 13))
                     .foregroundStyle(selected ? Color.primary : Color.primary.opacity(0.25))
+                    .scaleEffect(selected ? 1.06 : 1)
                     .padding(.top, 1)
 
                 VStack(alignment: .leading, spacing: 3) {
@@ -330,6 +371,7 @@ struct OnboardingFlow: View {
             .contentShape(RoundedRectangle(cornerRadius: 13, style: .continuous))
         }
         .buttonStyle(.plain)
+        .scaleEffect(selected ? 1 : 0.995)
     }
 
     @ViewBuilder
@@ -404,6 +446,7 @@ struct OnboardingFlow: View {
                 Capsule()
                     .fill(Color.primary.opacity(0.8))
                     .frame(width: max(2, proxy.size.width * min(1, max(0, value))))
+                    .animation(.linear(duration: 0.35), value: value)
             }
         }
         .frame(height: 4)
@@ -422,6 +465,7 @@ struct OnboardingFlow: View {
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
+            .staggerIn(0)
 
             VStack(spacing: 0) {
                 tip(number: "1", title: "写下来",
@@ -434,6 +478,7 @@ struct OnboardingFlow: View {
                     detail: "底栏直接播放，右下角按钮存成 WAV，文件在「文件 → 我的 iPad → BreezeSpeak」。")
             }
             .glassCard(cornerRadius: 20)
+            .staggerIn(1)
         }
     }
 
@@ -504,26 +549,22 @@ struct OnboardingFlow: View {
     private func primaryButton(_ title: String, enabled: Bool = true, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Text(title)
-                .font(.system(size: 14, weight: .semibold))
-                // 禁用态用弱化主色而不是反色：反色在浅底上几乎看不见
-                .foregroundStyle(enabled ? Theme.inverse : Color.primary.opacity(0.35))
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 13)
-                .background(
-                    Capsule(style: .continuous)
-                        .fill(Color.primary.opacity(enabled ? 1 : 0.10))
-                )
-                .contentShape(Capsule())
         }
-        .buttonStyle(.plain)
+        // 样式里已经处理了玻璃 / 实心两套外观、禁用态与按压回弹
+        .buttonStyle(PrimaryPillStyle(fillWidth: true, verticalPadding: 13))
         .disabled(!enabled)
+        .transition(.offset(y: 12).combined(with: .opacity))
     }
 
     // MARK: - 步进
 
     private func go(to next: Int) {
-        withAnimation(.easeInOut(duration: 0.24)) {
-            step = max(0, min(stepCount - 1, next))
+        let target = max(0, min(stepCount - 1, next))
+        guard target != step else { return }
+        forward = target > step
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        withAnimation(.spring(response: 0.44, dampingFraction: 0.88)) {
+            step = target
         }
     }
 }

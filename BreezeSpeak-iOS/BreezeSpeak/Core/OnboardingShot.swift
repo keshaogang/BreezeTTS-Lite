@@ -20,6 +20,9 @@ enum OnboardingShot {
     static func capture(env: AppEnvironment) {
         guard requested else { return }
 
+        // 错落入场是 onAppear 驱动的，离屏渲染不会触发，先切成终态
+        StaggerIn.instant = true
+
         // iPad Air 11" / Pro 11" 的逻辑尺寸（2x）
         let size = CGSize(width: 1180, height: 820)
         let dir = AppPaths.documents.appendingPathComponent("Shots", isDirectory: true)

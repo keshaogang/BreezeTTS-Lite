@@ -113,42 +113,85 @@ struct GlassGroup<Content: View>: View {
 
 // MARK: - Buttons
 
+/// 主按钮：液态玻璃胶囊。
+///
+/// iOS 26 且开关打开时用 `glassEffect(.regular.tint(...).interactive())`，
+/// 按下去玻璃本身会有高光形变；低版本 / 关掉开关时退回实心墨色胶囊，
+/// 两种外观下都保持「深底浅字」的对比，不会因为玻璃变淡而看不清。
 struct PrimaryPillStyle: ButtonStyle {
     @Environment(\.isEnabled) private var isEnabled
+    @ObservedObject private var glass = GlassSettings.shared
+
+    var fillWidth: Bool = false
+    var verticalPadding: CGFloat = 10
 
     func makeBody(configuration: Configuration) -> some View {
-        configuration.label
+        let label = configuration.label
             .font(.system(size: 13, weight: .semibold))
-            .foregroundStyle(Theme.inverse)
+            .foregroundStyle(isEnabled ? Theme.inverse : Color.primary.opacity(0.35))
             .padding(.horizontal, 18)
-            .padding(.vertical, 10)
-            .background(
-                Capsule(style: .continuous)
-                    .fill(Color.primary)
-                    .opacity(isEnabled ? 1 : 0.28)
-            )
-            .scaleEffect(configuration.isPressed ? 0.97 : 1)
-            .animation(.spring(response: 0.24, dampingFraction: 0.75), value: configuration.isPressed)
+            .padding(.vertical, verticalPadding)
+            .frame(maxWidth: fillWidth ? .infinity : nil)
+            .contentShape(Capsule(style: .continuous))
+
+        Group {
+            if #available(iOS 26.0, *), glass.enabled {
+                label.glassEffect(
+                    .regular
+                        .tint(Color.primary.opacity(isEnabled ? 0.9 : 0.28))
+                        .interactive(isEnabled),
+                    in: Capsule(style: .continuous)
+                )
+            } else {
+                label.background(
+                    Capsule(style: .continuous)
+                        .fill(Color.primary)
+                        .opacity(isEnabled ? 1 : 0.10)
+                )
+            }
+        }
+        .scaleEffect(configuration.isPressed ? 0.965 : 1)
+        .brightness(configuration.isPressed ? 0.04 : 0)
+        .animation(.spring(response: 0.26, dampingFraction: 0.72), value: configuration.isPressed)
+        .onChangeCompat(of: configuration.isPressed) { _, pressed in
+            if pressed { UIImpactFeedbackGenerator(style: .light).impactOccurred() }
+        }
     }
 }
 
+/// 次要按钮：薄玻璃胶囊，压下去轻微内缩。
 struct QuietPillStyle: ButtonStyle {
     @Environment(\.isEnabled) private var isEnabled
+    @ObservedObject private var glass = GlassSettings.shared
 
     func makeBody(configuration: Configuration) -> some View {
-        configuration.label
+        let label = configuration.label
             .font(.system(size: 12.5, weight: .medium))
             .foregroundStyle(Color.primary.opacity(isEnabled ? 0.9 : 0.35))
             .padding(.horizontal, 14)
             .padding(.vertical, 8)
-            .background(Capsule(style: .continuous).fill(Theme.faintFill))
-            .overlay(Capsule(style: .continuous).strokeBorder(Theme.hairline, lineWidth: 0.8))
-            .opacity(configuration.isPressed ? 0.7 : 1)
+            .contentShape(Capsule(style: .continuous))
+
+        Group {
+            if #available(iOS 26.0, *), glass.enabled {
+                label.glassEffect(.regular.interactive(isEnabled), in: Capsule(style: .continuous))
+            } else {
+                label
+                    .background(Capsule(style: .continuous).fill(Theme.faintFill))
+                    .overlay(Capsule(style: .continuous).strokeBorder(Theme.hairline, lineWidth: 0.8))
+            }
+        }
+        .scaleEffect(configuration.isPressed ? 0.97 : 1)
+        .opacity(configuration.isPressed ? 0.9 : 1)
+        .animation(.spring(response: 0.26, dampingFraction: 0.75), value: configuration.isPressed)
     }
 }
 
 extension View {
     func primaryPill() -> some View { buttonStyle(PrimaryPillStyle()) }
+    func primaryPill(fillWidth: Bool, verticalPadding: CGFloat = 13) -> some View {
+        buttonStyle(PrimaryPillStyle(fillWidth: fillWidth, verticalPadding: verticalPadding))
+    }
     func quietPill() -> some View { buttonStyle(QuietPillStyle()) }
 
     /// 工具栏里的紧凑玻璃图标按钮。
@@ -159,6 +202,57 @@ extension View {
             .contentShape(Circle())
             .glassCapsule()
             .foregroundStyle(.primary)
+    }
+}
+
+// MARK: - Motion
+
+/// 入场错落：每一步的第一屏内容按序号依次浮上来，避免整块同时出现。
+///
+/// 只改 opacity 与 offset，不参与布局，所以不会撑高页面或让 ScrollView 抖。
+struct StaggerIn: ViewModifier {
+    /// 离屏渲染（ImageRenderer）不会走 onAppear 里的动画，截图时直接关掉，
+    /// 否则拍出来是一片空白。
+    static var instant = false
+
+    var index: Int
+    var distance: CGFloat = 10
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var shown = false
+
+    private var revealed: Bool { shown || Self.instant || reduceMotion }
+
+    func body(content: Content) -> some View {
+        content
+            .opacity(revealed ? 1 : 0)
+            .offset(y: revealed ? 0 : distance)
+            .onAppear {
+                guard !Self.instant, !reduceMotion else { shown = true; return }
+                withAnimation(.spring(response: 0.46, dampingFraction: 0.86)
+                    .delay(Double(index) * 0.055)) {
+                    shown = true
+                }
+            }
+    }
+}
+
+extension View {
+    /// 按序号错落入场（0 最先，往后每格多等 55ms）。
+    func staggerIn(_ index: Int, distance: CGFloat = 10) -> some View {
+        modifier(StaggerIn(index: index, distance: distance))
+    }
+}
+
+/// iOS 17 才有 symbolEffect，低版本静默跳过。
+extension View {
+    @ViewBuilder
+    func bounceSymbol(_ trigger: Bool) -> some View {
+        if #available(iOS 17.0, *) {
+            self.symbolEffect(.bounce, value: trigger)
+        } else {
+            self
+        }
     }
 }
 
@@ -293,6 +387,9 @@ struct LevelMeter: View {
 }
 
 /// 弹窗统一外壳：标题 + 关闭键 + 细分隔线 + 可滚动内容。
+///
+/// 出现时整块轻微上浮 + 放大淡入，标题栏比内容早一帧到位；
+/// 关闭时先反向缩一下再真正 dismiss，避免「啪」地直接消失。
 struct SheetChrome<Content: View>: View {
     let title: String
     var subtitle: String? = nil
@@ -300,6 +397,8 @@ struct SheetChrome<Content: View>: View {
     @ViewBuilder var content: () -> Content
 
     @Environment(\.dismiss) private var dismiss
+
+    @State private var appeared = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -316,7 +415,7 @@ struct SheetChrome<Content: View>: View {
                 }
                 Spacer(minLength: 8)
                 if let trailing { trailing }
-                Button { dismiss() } label: {
+                Button { close() } label: {
                     Image(systemName: "xmark")
                 }
                 .buttonStyle(.plain)
@@ -324,6 +423,8 @@ struct SheetChrome<Content: View>: View {
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 14)
+            .opacity(appeared ? 1 : 0)
+            .offset(y: appeared ? 0 : -6)
 
             Divider().opacity(0.4)
 
@@ -332,7 +433,22 @@ struct SheetChrome<Content: View>: View {
                     .padding(20)
                     .padding(.bottom, 8)
             }
+            .opacity(appeared ? 1 : 0)
         }
         .background(Theme.canvas)
+        .scaleEffect(appeared ? 1 : 0.972, anchor: .center)
+        .offset(y: appeared ? 0 : 14)
+        .opacity(appeared ? 1 : 0)
+        .onAppear {
+            withAnimation(.spring(response: 0.40, dampingFraction: 0.86)) {
+                appeared = true
+            }
+        }
+    }
+
+    private func close() {
+        UIImpactFeedbackGenerator(style: .soft).impactOccurred()
+        withAnimation(.easeIn(duration: 0.15)) { appeared = false }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.13) { dismiss() }
     }
 }
