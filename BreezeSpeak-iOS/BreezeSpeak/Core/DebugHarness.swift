@@ -57,6 +57,16 @@ enum DebugHarness {
     static func run(env: AppEnvironment) {
         guard let action else { return }
         Task { @MainActor in
+            // route-xxx：完整走一遍「控制中心 / 快捷指令投递落点」的路径，
+            // 也就是 BreezeRouter.deliver → 通知 / UserDefaults → AppEnvironment 消费。
+            if action.hasPrefix("route-") {
+                let raw = String(action.dropFirst("route-".count))
+                try? await Task.sleep(nanoseconds: 1_200_000_000)
+                if let route = BreezeRoute(rawValue: raw) {
+                    BreezeRouter.deliver(route)
+                }
+                return
+            }
             try? await Task.sleep(nanoseconds: 900_000_000)
             if env.viewModel.text.isEmpty {
                 env.viewModel.text = "提醒，| 定时任务已经到时间。"

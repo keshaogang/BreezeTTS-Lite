@@ -46,6 +46,11 @@ struct BreezeSpeakApp: App {
             .canvasWindowBackground()
             .onChangeCompat(of: scenePhase) { _, newPhase in
                 environment.handleScenePhase(newPhase)
+                // 控制中心按钮 / 快捷指令是先把落点写下来再把 App 拉到前台，
+                // 通知可能在界面还没起来时就发了，所以回到前台再取一次。
+                if newPhase == .active {
+                    environment.consumePendingRoute()
+                }
             }
             // 小组件与快捷指令的深链：breezespeak://compose|voices|history|settings
             .onOpenURL { url in
@@ -55,6 +60,7 @@ struct BreezeSpeakApp: App {
                 environment.open(link)
             }
             .task {
+                environment.consumePendingRoute()
                 #if DEBUG
                 if OnboardingShot.requested {
                     OnboardingShot.capture(env: environment)

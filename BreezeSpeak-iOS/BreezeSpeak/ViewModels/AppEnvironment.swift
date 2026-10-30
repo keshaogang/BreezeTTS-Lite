@@ -56,6 +56,14 @@ final class AppEnvironment: ObservableObject {
         ) { [weak self] _ in
             Task { @MainActor in self?.handleMemoryWarning() }
         }
+        // 控制中心按钮 / 快捷指令在 App 已经运行时点下来，需要立刻跳转
+        routeObserver = NotificationCenter.default.addObserver(
+            forName: BreezeRouter.requested,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor in self?.handleRouteNotification() }
+        }
         // 首次启动先让用户把引导与协议读完，这里不抢跑网络：
         // 权重由引导里的「选择模型」那一步发起下载。
         if OnboardingState.isCompleted {
@@ -67,6 +75,7 @@ final class AppEnvironment: ObservableObject {
 
     private var memoryCancellable: AnyCancellable?
     private var memoryWarningObserver: NSObjectProtocol?
+    private var routeObserver: NSObjectProtocol?
 
     // MARK: - 内存压力
 
@@ -105,6 +114,8 @@ final class AppEnvironment: ObservableObject {
         let apply = {
             switch link {
             case .compose: vm.requestCompose()
+            case .clone: vm.requestVoiceLab(tab: .clone)
+            case .design: vm.requestVoiceLab(tab: .design)
             case .voices: vm.showVoiceLibrary = true
             case .history: vm.showHistory = true
             case .settings: vm.showSettings = true
@@ -125,6 +136,20 @@ final class AppEnvironment: ObservableObject {
             try? await Task.sleep(nanoseconds: 260_000_000)
             apply()
         }
+    }
+
+    /// 控制中心按钮与快捷指令投递进来的落点。
+    ///
+    /// 两条入口都收：一条是启动时的 UserDefaults 存根（冷启动时按钮先把落点写下来，
+    /// App 起来后再取），一条是运行中的通知（App 已经在前台时立刻响应）。
+    func consumePendingRoute() {
+        guard let route = BreezeRouter.takePending() else { return }
+        guard OnboardingState.isCompleted else { return }
+        open(WidgetLink(rawValue: route.rawValue) ?? .compose)
+    }
+
+    func handleRouteNotification() {
+        consumePendingRoute()
     }
 
     // MARK: - 前后台

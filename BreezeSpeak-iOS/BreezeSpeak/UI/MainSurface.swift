@@ -326,6 +326,7 @@ struct RootView: View {
                 Button {
                     if vm.isGenerating { vm.cancel() } else { vm.generate() }
                 } label: {
+                    let active = vm.canGenerate || vm.isGenerating
                     HStack(spacing: 7) {
                         if vm.isGenerating {
                             ProgressView().controlSize(.small).scaleEffect(0.6).frame(width: 12, height: 12)
@@ -335,10 +336,12 @@ struct RootView: View {
                         Text(vm.isGenerating ? "停止" : "生成")
                             .font(.system(size: 13, weight: .semibold))
                     }
-                    .foregroundStyle(Theme.inverse)
+                    .foregroundStyle(active ? Theme.inverse : Color.primary.opacity(0.42))
                     .padding(.horizontal, 18)
                     .padding(.vertical, 9)
-                    .background(Capsule().fill(Color.primary.opacity(vm.canGenerate || vm.isGenerating ? 1 : 0.25)))
+                    // 给胶囊上色：外面那条工具栏是中性玻璃，这颗是染深的玻璃，
+                    // 两层玻璃贴在一起时系统还会让它们互相吸附。
+                    .glassCapsule(tint: Color.primary.opacity(active ? 0.88 : 0.16))
                     .contentShape(Capsule())
                 }
                 .buttonStyle(.plain)

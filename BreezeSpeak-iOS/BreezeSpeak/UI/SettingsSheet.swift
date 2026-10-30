@@ -34,13 +34,14 @@ struct SettingsSheet: View {
 
     private var integrationSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            SectionLabel(text: "快捷指令与小组件")
+            SectionLabel(text: "快捷指令 · 小组件 · 控制中心")
 
-            KeyValueRow(key: "快捷指令", value: "快捷指令 App 里搜 BreezeSpeak")
-            KeyValueRow(key: "桌面小组件", value: "长按桌面 → 左上角 + → 搜 BreezeSpeak")
-            KeyValueRow(key: "锁屏小组件", value: "长按锁屏 → 自定义 → 添加小组件")
+            KeyValueRow(key: "快捷指令", value: "6 个动作：生成音频 / 快速克隆 / 文字造声 / 设默认声线 / 列出声线 / 打开界面")
+            KeyValueRow(key: "桌面小组件", value: "长按桌面 → 左上角 + → 搜 BreezeSpeak（小 / 中 / 大）")
+            KeyValueRow(key: "锁屏小组件", value: "长按锁屏 → 自定义 → 添加（圆形 / 矩形 / 行内）")
+            KeyValueRow(key: "控制中心", value: "长按控制中心 → 左下角 + → BreezeSpeak")
 
-            Text("快捷指令可直接拿到合成的 WAV 文件，能接着串「保存到文件」「播放」「隔空投送」。小组件上的每个入口都会直接跳到对应界面。")
+            Text("快捷指令可直接拿到合成的 WAV 文件，能接着串「保存到文件」「播放」「隔空投送」；「设默认声线」不打开 App 也能改。控制中心四个按钮（新建朗读 / 克隆声音 / 音色库 / 文字造声）点一下直接落到对应页面。")
                 .font(.system(size: 10))
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -69,17 +70,15 @@ struct SettingsSheet: View {
 
     @ViewBuilder
     private var appearanceSection: some View {
-        if #available(iOS 26.0, *) {
-            VStack(alignment: .leading, spacing: 12) {
-                SectionLabel(text: "外观")
+        VStack(alignment: .leading, spacing: 12) {
+            SectionLabel(text: "外观")
 
-                toggle("液态玻璃",
-                       detail: "开启后工具栏与弹窗用系统的玻璃材质，能透出底下的内容；关闭则退回毛玻璃，更实、更安静。",
-                       isOn: Binding(
-                           get: { glass.enabled },
-                           set: { glass.enabled = $0 }
-                       ))
-            }
+            toggle("液态玻璃",
+                   detail: "开启后工具栏、按钮与弹窗用系统的液态玻璃：玻璃会折射底下的内容，按下去有高光形变。关闭退回普通毛玻璃，更实、更安静。",
+                   isOn: Binding(
+                       get: { glass.enabled },
+                       set: { glass.enabled = $0 }
+                   ))
         }
     }
 
@@ -262,8 +261,10 @@ struct SettingsSheet: View {
                     .foregroundStyle(.secondary)
             }
         }
-        // 不用系统开关 + tint(.primary)：深色下轨道与滑块都变白，整块糊成一片。
-        .toggleStyle(InkSwitchToggleStyle())
+        // 用系统开关本身：iOS 26 起开关是系统渲染的液态玻璃，
+        // 自己画一个「黑胶囊 + 白圆」永远只是模仿，动效和材质都对不上。
+        // 只把着色换成中灰：深色下 .primary 是白色，白轨道 + 白滑块会糊成一片。
+        .tint(Theme.controlTint)
     }
 
     private func slider(_ title: String, value: Binding<Double>,

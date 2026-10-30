@@ -103,6 +103,7 @@ enum TTSError: LocalizedError {
     case engineUnavailable
     case modelNotReady
     case emptyText
+    case voiceNotFound
     case outOfMemory
     case cancelled
     case synthesisFailed(String)
@@ -117,6 +118,8 @@ enum TTSError: LocalizedError {
             return "模型尚未下载完成，请先在「模型管理」中完成下载。"
         case .emptyText:
             return "请输入要合成的文本。"
+        case .voiceNotFound:
+            return "找不到这条声线，它可能已经被删除了。"
         case .outOfMemory:
             return "设备可用内存不足，已中止本次推理。请关闭其他 App 后重试。"
         case .cancelled:

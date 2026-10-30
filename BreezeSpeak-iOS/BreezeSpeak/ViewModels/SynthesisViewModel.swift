@@ -102,6 +102,22 @@ final class SynthesisViewModel: ObservableObject {
         composeToken &+= 1
     }
 
+    /// 声线库要停在哪一页。控制中心 / 快捷指令先写这里，
+    /// VoiceSheet 一出现就读走并清空——用一次性信号，而不是长期状态，
+    /// 否则用户自己切到「内置」后一点别的入口又会被强行拽回克隆页。
+    enum VoiceLabTab: String {
+        case builtin
+        case clone
+        case design
+    }
+
+    @Published var requestedVoiceTab: VoiceLabTab?
+
+    func requestVoiceLab(tab: VoiceLabTab) {
+        requestedVoiceTab = tab
+        showVoiceLibrary = true
+    }
+
     /// 单次解码模式下引擎只会在最后吐一次音频，进度条靠这条计时器推进
     private var progressTicker: Task<Void, Never>?
 

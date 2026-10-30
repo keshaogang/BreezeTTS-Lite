@@ -81,10 +81,15 @@ struct GenerateSpeechIntent: AppIntent {
     @Parameter(title: "演绎指令", description: "例如：温柔一点，语速稍慢")
     var direction: String?
 
+    /// 可选覆盖：留空就用声线自己存着的语速。
+    @Parameter(title: "语速倍率", description: "0.7 ~ 1.3。留空沿用声线设置")
+    var speed: Double?
+
     static var parameterSummary: some ParameterSummary {
         Summary("用 BreezeSpeak 朗读 \(\.$text)") {
             \.$voice
             \.$direction
+            \.$speed
         }
     }
 
@@ -110,7 +115,7 @@ struct GenerateSpeechIntent: AppIntent {
             voice: profile,
             direction: (direction ?? "").trimmingCharacters(in: .whitespacesAndNewlines),
             guidanceScale: profile.guidanceScale,
-            speed: profile.speed
+            speed: speed.map { min(max($0, 0.7), 1.3) } ?? profile.speed
         )
 
         let result = try await runtime.synthesize(request, onProgress: { _ in }, onPartial: { _ in })
@@ -142,22 +147,5 @@ struct GenerateSpeechIntent: AppIntent {
             return profile
         }
         return store.defaultVoice
-    }
-}
-
-// MARK: - 免配置快捷指令
-
-struct BreezeSpeakShortcuts: AppShortcutsProvider {
-    static var appShortcuts: [AppShortcut] {
-        AppShortcut(
-            intent: GenerateSpeechIntent(),
-            phrases: [
-                "用 \(.applicationName) 生成播报",
-                "让 \(.applicationName) 朗读这段话",
-                "用 \(.applicationName) 生成语音"
-            ],
-            shortTitle: "生成播报音频",
-            systemImageName: "waveform"
-        )
     }
 }

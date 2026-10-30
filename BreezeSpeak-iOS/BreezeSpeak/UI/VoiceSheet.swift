@@ -91,6 +91,36 @@ struct VoiceSheet: View {
                 editingVoice = env.voices.selectedVoice
             }
             #endif
+            applyRequestedTab()
+        }
+        // 已经开着声线库时再点控制中心按钮：不用重开弹窗，直接切页
+        .onChangeCompat(of: vm.requestedVoiceTab) { _, _ in
+            applyRequestedTab()
+        }
+    }
+
+    // MARK: - 外部投递的落点
+
+    /// 控制中心「克隆声音」「文字造声」、快捷指令、小组件点进来时，
+    /// 直接把页面停在对应 Tab，不用用户再自己找。
+    private func applyRequestedTab() {
+        guard let requested = vm.requestedVoiceTab else { return }
+        vm.requestedVoiceTab = nil
+
+        withAnimation(.spring(response: 0.32, dampingFraction: 0.86)) {
+            switch requested {
+            case .builtin: tab = .builtin
+            case .clone: tab = .clone
+            case .design: tab = .design
+            }
+        }
+
+        // 快捷指令里写了「音色描述」的，进到造声页就是填好的
+        if requested == .design,
+           lab.designDescription.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+           let pending = UserDefaults.standard.string(forKey: "breezespeak.design.pendingDescriptor") {
+            UserDefaults.standard.removeObject(forKey: "breezespeak.design.pendingDescriptor")
+            lab.designDescription = pending
         }
     }
 

@@ -42,6 +42,8 @@ enum WidgetInk {
 /// 小组件点按后跳转的目标。App 侧在 onOpenURL 里解析。
 enum WidgetLink: String {
     case compose
+    case clone
+    case design
     case voices
     case history
     case settings

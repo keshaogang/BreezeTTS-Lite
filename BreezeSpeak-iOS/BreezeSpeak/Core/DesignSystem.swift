@@ -30,11 +30,8 @@ final class GlassSettings: ObservableObject {
         enabled = (UserDefaults.standard.object(forKey: Self.key) as? Bool) ?? true
     }
 
-    /// 这套系统本身有没有液态玻璃（iOS 26 起才有）
-    static var isAvailableOnThisOS: Bool {
-        if #available(iOS 26.0, *) { return true }
-        return false
-    }
+    /// 玻璃是自绘的，任何系统版本都有；留这个属性只为兼容旧调用点。
+    static var isAvailableOnThisOS: Bool { true }
 }
 
 @available(iOS 26.0, *)
@@ -43,6 +40,17 @@ private func makeGlass(tint: Color?, interactive: Bool) -> Glass {
     if interactive { glass = glass.interactive() }
     if let tint { glass = glass.tint(tint) }
     return glass
+}
+
+/// 开关关掉时的替代底：实心毛玻璃 + 一条细线，安静、不抢戏。
+private struct FlatSurface<S: InsettableShape>: View {
+    var shape: S
+
+    var body: some View {
+        shape
+            .fill(.regularMaterial)
+            .overlay(shape.strokeBorder(Theme.hairline, lineWidth: 0.8))
+    }
 }
 
 private struct GlassCardModifier: ViewModifier {
@@ -56,10 +64,7 @@ private struct GlassCardModifier: ViewModifier {
         if #available(iOS 26.0, *), settings.enabled {
             content.glassEffect(makeGlass(tint: tint, interactive: interactive), in: shape)
         } else {
-            content
-                .background(.regularMaterial, in: shape)
-                .overlay(shape.strokeBorder(Theme.hairline, lineWidth: 0.8))
-                .shadow(color: .black.opacity(0.10), radius: 26, y: 12)
+            content.background { FlatSurface(shape: shape) }
         }
     }
 }
@@ -71,12 +76,9 @@ private struct GlassCapsuleModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         if #available(iOS 26.0, *), settings.enabled {
-            content.glassEffect(makeGlass(tint: tint, interactive: interactive), in: Capsule())
+            content.glassEffect(makeGlass(tint: tint, interactive: interactive), in: Capsule(style: .continuous))
         } else {
-            content
-                .background(.regularMaterial, in: Capsule())
-                .overlay(Capsule().strokeBorder(Theme.hairline, lineWidth: 0.8))
-                .shadow(color: .black.opacity(0.10), radius: 18, y: 8)
+            content.background { FlatSurface(shape: Capsule(style: .continuous)) }
         }
     }
 }
@@ -95,7 +97,8 @@ extension View {
     }
 }
 
-/// 把多个玻璃形状归组，让它们之间可以互相形变（iOS 26+）。
+/// 玻璃容器：把相邻的玻璃归到同一个容器里，系统才会让它们在靠近时互相吸附、
+/// 合流成一块（这是液态玻璃「会流动」的关键，单独一块块画是做不出来的）。
 struct GlassGroup<Content: View>: View {
     var spacing: CGFloat = 14
     @ViewBuilder var content: () -> Content
@@ -113,11 +116,12 @@ struct GlassGroup<Content: View>: View {
 
 // MARK: - Buttons
 
-/// 主按钮：液态玻璃胶囊。
+/// 主按钮：系统液态玻璃。
 ///
-/// iOS 26 且开关打开时用 `glassEffect(.regular.tint(...).interactive())`，
-/// 按下去玻璃本身会有高光形变；低版本 / 关掉开关时退回实心墨色胶囊，
-/// 两种外观下都保持「深底浅字」的对比，不会因为玻璃变淡而看不清。
+/// iOS 26 起直接交给 `glassEffect(.regular.tint(...).interactive())`：
+/// 染色玻璃、按下时玻璃本身会有高光形变，都是系统渲染的，不自己画。
+/// 禁用态不再是「25% 墨色 + 近白字」（白底上几乎看不见），
+/// 改成浅染色玻璃 + 42% 字，读得出来但明显点不了。
 struct PrimaryPillStyle: ButtonStyle {
     @Environment(\.isEnabled) private var isEnabled
     @ObservedObject private var glass = GlassSettings.shared
@@ -126,32 +130,30 @@ struct PrimaryPillStyle: ButtonStyle {
     var verticalPadding: CGFloat = 10
 
     func makeBody(configuration: Configuration) -> some View {
+        let shape = Capsule(style: .continuous)
         let label = configuration.label
             .font(.system(size: 13, weight: .semibold))
-            .foregroundStyle(isEnabled ? Theme.inverse : Color.primary.opacity(0.35))
+            .foregroundStyle(isEnabled ? Theme.inverse : Color.primary.opacity(0.42))
             .padding(.horizontal, 18)
             .padding(.vertical, verticalPadding)
             .frame(maxWidth: fillWidth ? .infinity : nil)
-            .contentShape(Capsule(style: .continuous))
+            .contentShape(shape)
 
         Group {
             if #available(iOS 26.0, *), glass.enabled {
                 label.glassEffect(
                     .regular
-                        .tint(Color.primary.opacity(isEnabled ? 0.9 : 0.28))
+                        .tint(Color.primary.opacity(isEnabled ? 0.88 : 0.16))
                         .interactive(isEnabled),
-                    in: Capsule(style: .continuous)
+                    in: shape
                 )
             } else {
-                label.background(
-                    Capsule(style: .continuous)
-                        .fill(Color.primary)
-                        .opacity(isEnabled ? 1 : 0.10)
-                )
+                label.background {
+                    shape.fill(Color.primary.opacity(isEnabled ? 1 : 0.10))
+                }
             }
         }
         .scaleEffect(configuration.isPressed ? 0.965 : 1)
-        .brightness(configuration.isPressed ? 0.04 : 0)
         .animation(.spring(response: 0.26, dampingFraction: 0.72), value: configuration.isPressed)
         .onChangeCompat(of: configuration.isPressed) { _, pressed in
             if pressed { UIImpactFeedbackGenerator(style: .light).impactOccurred() }
@@ -165,24 +167,23 @@ struct QuietPillStyle: ButtonStyle {
     @ObservedObject private var glass = GlassSettings.shared
 
     func makeBody(configuration: Configuration) -> some View {
+        let shape = Capsule(style: .continuous)
         let label = configuration.label
             .font(.system(size: 12.5, weight: .medium))
             .foregroundStyle(Color.primary.opacity(isEnabled ? 0.9 : 0.35))
             .padding(.horizontal, 14)
             .padding(.vertical, 8)
-            .contentShape(Capsule(style: .continuous))
+            .contentShape(shape)
 
         Group {
             if #available(iOS 26.0, *), glass.enabled {
-                label.glassEffect(.regular.interactive(isEnabled), in: Capsule(style: .continuous))
+                label.glassEffect(.regular.interactive(isEnabled), in: shape)
             } else {
-                label
-                    .background(Capsule(style: .continuous).fill(Theme.faintFill))
-                    .overlay(Capsule(style: .continuous).strokeBorder(Theme.hairline, lineWidth: 0.8))
+                label.background { FlatSurface(shape: shape) }
             }
         }
         .scaleEffect(configuration.isPressed ? 0.97 : 1)
-        .opacity(configuration.isPressed ? 0.9 : 1)
+        .opacity(configuration.isPressed ? 0.92 : 1)
         .animation(.spring(response: 0.26, dampingFraction: 0.75), value: configuration.isPressed)
     }
 }
@@ -253,59 +254,6 @@ extension View {
         } else {
             self
         }
-    }
-}
-
-// MARK: - 单色开关
-
-/// 自绘开关。
-///
-/// 系统开关配 `.tint(.primary)` 在浅色下是「黑轨道 + 白滑块」，看着没问题；
-/// 可 `.primary` 在深色下是白色，于是轨道和滑块一起变白，整块糊成一个白胶囊，
-/// 既看不出开/关，夜里也很刺眼。这里把两态都做成反色：
-///   开 → 轨道取主色（浅色黑 / 深色白），滑块取画布色（浅色近白 / 深色近黑）
-///   关 → 轨道 10% 主色，滑块 42% 主色
-/// 两种外观下都有明确对比，同时保持整套单色语言。
-struct InkSwitchToggleStyle: ToggleStyle {
-    var trackWidth: CGFloat = 44
-    var trackHeight: CGFloat = 26
-    var knobSize: CGFloat = 20
-
-    func makeBody(configuration: Configuration) -> some View {
-        Button {
-            configuration.isOn.toggle()
-            UIImpactFeedbackGenerator(style: .light).impactOccurred()
-        } label: {
-            HStack(spacing: 12) {
-                configuration.label
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                track(isOn: configuration.isOn)
-            }
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-        .animation(.spring(response: 0.26, dampingFraction: 0.82), value: configuration.isOn)
-        .accessibilityElement(children: .combine)
-        .accessibilityValue(configuration.isOn ? "已开启" : "已关闭")
-        .accessibilityAddTraits(configuration.isOn ? [.isButton, .isSelected] : .isButton)
-    }
-
-    private func track(isOn: Bool) -> some View {
-        Capsule(style: .continuous)
-            .fill(isOn ? AnyShapeStyle(Color.primary) : AnyShapeStyle(Color.primary.opacity(0.10)))
-            .overlay(
-                Capsule(style: .continuous)
-                    .strokeBorder(Color.primary.opacity(isOn ? 0 : 0.10), lineWidth: 0.8)
-            )
-            .overlay(alignment: isOn ? .trailing : .leading) {
-                Circle()
-                    .fill(Theme.knob(isOn: isOn))
-                    .frame(width: knobSize, height: knobSize)
-                    .padding(.horizontal, 3)
-                    .shadow(color: .black.opacity(isOn ? 0.18 : 0.06), radius: 1.5, y: 0.5)
-            }
-            .frame(width: trackWidth, height: trackHeight)
-            .fixedSize()
     }
 }
 
