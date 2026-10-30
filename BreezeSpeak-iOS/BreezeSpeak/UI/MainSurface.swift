@@ -15,41 +15,65 @@ struct RootView: View {
 
     @FocusState private var editorFocused: Bool
     @StateObject private var keyboard = KeyboardObserver()
+    /// 底部工具栏实际占的高度（含上下 padding 与键盘高度），由工具栏自己量出来
+    @State private var toolbarReserve: CGFloat = 0
 
     var body: some View {
-        ZStack {
+        // 布局原则：顶部永不受键盘影响。
+        //
+        // 之前工具栏用 `.safeAreaInset(edge: .bottom)` 挂上去，键盘一弹，安全区被改写，
+        // 整个视图树重新参与一次「撑高 / 居中」的协商，结果就是内容整体被顶偏十几到几十点，
+        // 看起来正是「一开输入法界面就往下跳」。
+        // 现在改成：内容区高度自己算（减去工具栏占位），工具栏用 overlay 浮在底部。
+        // 键盘高度只影响「内容底部让出多少」，不触发任何安全区协商，顶部因此是钉死的。
+        ZStack(alignment: .top) {
             Theme.canvas.ignoresSafeArea()
 
-            VStack(spacing: 0) {
-                topBar
-                    .padding(.horizontal, 22)
-                    .padding(.top, 14)
+            GeometryReader { proxy in
+                VStack(spacing: 0) {
+                    topBar
+                        .padding(.horizontal, 22)
+                        .padding(.top, 14)
 
-                editor
-                    .padding(.horizontal, 32)
-                    .padding(.top, 26)
+                    editor
+                        .padding(.horizontal, 32)
+                        .padding(.top, 26)
 
-                footer
-                    .padding(.horizontal, 32)
-                    .padding(.top, 10)
-                    .padding(.bottom, 10)
+                    footer
+                        .padding(.horizontal, 32)
+                        .padding(.top, 10)
+                        .padding(.bottom, 10)
+                }
+                .frame(width: proxy.size.width,
+                       height: max(0, proxy.size.height - toolbarReserve),
+                       alignment: .top)
+                #if DEBUG
+                .onAppear {
+                    KBSnap.layoutNote = "geo \(proxy.size) reserve \(toolbarReserve) safe \(proxy.safeAreaInsets)"
+                }
+                .onChangeCompat(of: proxy.size) { _, size in
+                    KBSnap.layoutNote = "geo \(size) reserve \(toolbarReserve) safe \(proxy.safeAreaInsets)"
+                }
+                #endif
             }
         }
         // 键盘安全区自己接管：
         //   · 贴底全屏键盘 → 工具栏按键盘高度整体上移；
         //   · 悬浮 / 拆分键盘 → 它只是块浮窗，工具栏留在原位，页面不为它让位；
         //   · 外接键盘 → 没有软件键盘，什么都不用动。
-        // 交给系统默认行为的话，悬浮键盘也会把工具栏顶上去，那才是不该发生的事。
-        .safeAreaInset(edge: .bottom, spacing: 0) {
+        .overlay(alignment: .bottom) {
             toolbar
                 .padding(.horizontal, 24)
                 .padding(.top, 6)
                 .padding(.bottom, 14 + keyboard.dockedHeight)
                 .animation(.easeOut(duration: 0.2), value: keyboard.dockedHeight)
+                .background(
+                    GeometryReader { geo in
+                        Color.clear.preference(key: ToolbarHeightKey.self, value: geo.size.height)
+                    }
+                )
         }
-        // 必须放在 safeAreaInset 之后：先让系统把键盘安全区整体忽略掉，
-        // 再用上面那层 padding 自己去顶。顺序反过来会「系统抬一次 + 自己抬一次」，
-        // 工具栏被顶到屏幕中间去。
+        .onPreferenceChange(ToolbarHeightKey.self) { toolbarReserve = $0 }
         .ignoresSafeArea(.keyboard, edges: .bottom)
         .onChangeCompat(of: vm.text) { old, new in
             // 回车即发送：TextEditor 没有 onSubmit，只能在文本变化里截住那个换行。
@@ -178,27 +202,33 @@ struct RootView: View {
     // MARK: - 编辑区
 
     private var editor: some View {
-        ZStack(alignment: .topLeading) {
-            TextEditor(text: $vm.text)
-                .font(.system(size: 17))
-                .lineSpacing(7)
-                .scrollContentBackground(.hidden)
-                .focused($editorFocused)
-                .scrollDismissesKeyboard(.interactively)
-                .padding(.horizontal, -4)
-
-            if vm.text.isEmpty {
-                Text("写点什么，或者粘贴一段文字。\n支持 | 短停顿、|| 长停顿、(slow) (fast) (whisper)、[笑] 等标记。")
+        // 用 GeometryReader 包一层：TextEditor 自带一个不小的固有高度，
+        // 键盘把可用高度压到很小时它不肯继续缩，整块内容就会溢出可用区域、
+        // 被整体顶偏（看起来就是「一开键盘内容往下跳」）。包一层后它接受任何尺寸。
+        GeometryReader { proxy in
+            ZStack(alignment: .topLeading) {
+                TextEditor(text: $vm.text)
                     .font(.system(size: 17))
                     .lineSpacing(7)
-                    .foregroundStyle(.tertiary)
-                    .allowsHitTesting(false)
+                    .scrollContentBackground(.hidden)
+                    .focused($editorFocused)
+                    .scrollDismissesKeyboard(.interactively)
+                    .padding(.horizontal, -4)
+
+                if vm.text.isEmpty {
+                    Text("写点什么，或者粘贴一段文字。\n支持 | 短停顿、|| 长停顿、(slow) (fast) (whisper)、[笑] 等标记。")
+                        .font(.system(size: 17))
+                        .lineSpacing(7)
+                        .foregroundStyle(.tertiary)
+                        .allowsHitTesting(false)
+                }
             }
+            .frame(width: proxy.size.width, height: proxy.size.height, alignment: .topLeading)
         }
         // 显式抢焦点：个别情况下（外部键盘配对过、手势被浮层吃掉）
         // TextEditor 自带的点击聚焦会失效，这里兜底一次。
         .onTapGesture { editorFocused = true }
-        .frame(maxWidth: 700, maxHeight: .infinity, alignment: .topLeading)
+        .frame(maxWidth: 700, maxHeight: .infinity)
         .frame(maxWidth: .infinity, alignment: .center)
         // 「收起键盘」放在底部工具栏里，跟着 keyboard.isVisible 出现：
         // 外接键盘 / 悬浮键盘收起时它不该占位置，也不该出现在键盘工具条上。
@@ -418,5 +448,15 @@ struct PlaybackTrack: View {
                     }
             )
         }
+    }
+}
+
+// MARK: - 工具栏高度
+
+/// 把工具栏的实际高度往上递，内容区据此让出底部空间。
+struct ToolbarHeightKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = max(value, nextValue())
     }
 }

@@ -39,6 +39,7 @@ struct BreezeSpeakApp: App {
             .environmentObject(environment.memory)
             .tint(Palette.accent)
             // 内容区之外（键盘上方、窗口拉伸时）不留白：先铺一层画布色，再把窗口底色也刷同色
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .background(Theme.canvas.ignoresSafeArea())
             .canvasWindowBackground()
             .onChangeCompat(of: scenePhase) { _, newPhase in
@@ -48,6 +49,8 @@ struct BreezeSpeakApp: App {
                 #if DEBUG
                 if OnboardingShot.requested {
                     OnboardingShot.capture(env: environment)
+                } else if KBSnap.requested {
+                    KBSnap.run()
                 } else {
                     DebugHarness.run(env: environment)
                 }
