@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 struct SettingsSheet: View {
     @EnvironmentObject private var env: AppEnvironment
@@ -23,9 +24,45 @@ struct SettingsSheet: View {
                 synthSection
                 memorySection
                 dataSection
+                integrationSection
                 aboutSection
             }
         }
+    }
+
+    // MARK: - 系统集成
+
+    private var integrationSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            SectionLabel(text: "快捷指令与小组件")
+
+            KeyValueRow(key: "快捷指令", value: "快捷指令 App 里搜 BreezeSpeak")
+            KeyValueRow(key: "桌面小组件", value: "长按桌面 → 左上角 + → 搜 BreezeSpeak")
+            KeyValueRow(key: "锁屏小组件", value: "长按锁屏 → 自定义 → 添加小组件")
+
+            Text("快捷指令可直接拿到合成的 WAV 文件，能接着串「保存到文件」「播放」「隔空投送」。小组件上的每个入口都会直接跳到对应界面。")
+                .font(.system(size: 10))
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+
+            Button {
+                openShortcutsApp()
+            } label: {
+                HStack(spacing: 5) {
+                    Image(systemName: "arrow.up.forward.app")
+                        .font(.system(size: 10.5, weight: .medium))
+                    Text("打开快捷指令 App")
+                        .font(.system(size: 11.5, weight: .medium))
+                }
+            }
+            .buttonStyle(.plain)
+            .foregroundStyle(.primary)
+        }
+    }
+
+    private func openShortcutsApp() {
+        guard let url = URL(string: "shortcuts://") else { return }
+        UIApplication.shared.open(url)
     }
 
     // MARK: - 外观

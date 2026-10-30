@@ -90,6 +90,43 @@ final class AppEnvironment: ObservableObject {
         }
     }
 
+    // MARK: - 深链
+
+    /// 小组件 / 快捷指令点进来的落点。
+    ///
+    /// 先关掉当前可能开着的弹层再开目标弹层：同一次 runloop 里直接改两个
+    /// sheet 标志，SwiftUI 会认为只发生了「一次变化」，表现是新弹窗一闪就没了。
+    /// 所以有正在显示的弹层时，等它收完（0.26s，约合默认 sheet 退场）再开。
+    func open(_ link: WidgetLink) {
+        let vm = viewModel
+        let hasSheet = vm.showVoiceLibrary || vm.showHistory || vm.showSettings
+            || vm.showModelSheet || vm.showTuning
+
+        let apply = {
+            switch link {
+            case .compose: vm.requestCompose()
+            case .voices: vm.showVoiceLibrary = true
+            case .history: vm.showHistory = true
+            case .settings: vm.showSettings = true
+            }
+        }
+
+        guard hasSheet else {
+            apply()
+            return
+        }
+
+        vm.showVoiceLibrary = false
+        vm.showHistory = false
+        vm.showSettings = false
+        vm.showModelSheet = false
+        vm.showTuning = false
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 260_000_000)
+            apply()
+        }
+    }
+
     // MARK: - 前后台
 
     private var pendingUnload: DispatchWorkItem?

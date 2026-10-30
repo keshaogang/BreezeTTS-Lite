@@ -47,10 +47,19 @@ struct BreezeSpeakApp: App {
             .onChangeCompat(of: scenePhase) { _, newPhase in
                 environment.handleScenePhase(newPhase)
             }
+            // 小组件与快捷指令的深链：breezespeak://compose|voices|history|settings
+            .onOpenURL { url in
+                guard let link = WidgetLink.parse(url) else { return }
+                // 引导还没走完时不跳转，否则用户会被扔进一个弹窗、看不到协议
+                guard onboarded else { return }
+                environment.open(link)
+            }
             .task {
                 #if DEBUG
                 if OnboardingShot.requested {
                     OnboardingShot.capture(env: environment)
+                } else if WidgetShot.requested {
+                    WidgetShot.capture()
                 } else if KBSnap.requested {
                     KBSnap.run()
                 } else {

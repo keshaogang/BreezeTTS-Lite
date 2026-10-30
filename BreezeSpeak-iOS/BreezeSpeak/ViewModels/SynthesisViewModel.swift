@@ -90,8 +90,17 @@ final class SynthesisViewModel: ObservableObject {
     @Published var exportFileName = "BreezeSpeak.wav"
     @Published var alert: AlertPayload?
     @Published var toast: String?
+    /// 来自小组件 / 快捷指令的「新建朗读」信号。自增即触发一次，
+    /// 界面侧监听它把焦点交给输入框，不必额外传状态。
+    @Published private(set) var composeToken = 0
     /// 生成结束后是否自动播放
     @Published var autoPlay = true
+
+    /// 从桌面上点「开始朗读」进来时调用：只把焦点交回输入框。
+    /// 不碰已有正文——用户可能正写着一半，从桌面点回来不该把草稿清掉。
+    func requestCompose() {
+        composeToken &+= 1
+    }
 
     /// 单次解码模式下引擎只会在最后吐一次音频，进度条靠这条计时器推进
     private var progressTicker: Task<Void, Never>?

@@ -87,6 +87,10 @@ struct RootView: View {
             // 权重一下好就预热，第一次点生成不用等加载
             if case .ready = status { env.warmUp() }
         }
+        // 从桌面小组件点「开始朗读」进来：直接把光标放进正文
+        .onChangeCompat(of: vm.composeToken) { _, _ in
+            editorFocused = true
+        }
         .task {
             #if DEBUG
             // 键盘布局走查：-demo focus-editor 直接聚焦正文，好把键盘调出来截图

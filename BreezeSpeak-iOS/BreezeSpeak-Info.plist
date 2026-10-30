@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- 只放自动生成拿不到的键；其余（场景清单、权限说明、方向）仍由
+	     GENERATE_INFOPLIST_FILE 生成后合并进来。 -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.breezespeak.app</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>breezespeak</string>
+			</array>
+		</dict>
+	</array>
+</dict>
+</plist>

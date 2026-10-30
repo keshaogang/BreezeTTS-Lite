@@ -232,7 +232,18 @@ BreezeSpeak/
 │   │   ├── HistorySheet.swift      历史（重听 / 导出 / 复用 / 删除）
 │   │   ├── ModelSheet.swift        模型、内存、缓存、离线说明
 │   │   └── SettingsSheet.swift     播放、合成参数、数据位置、关于
-│   └── Intents/                    GenerateSpeechIntent + AppShortcutsProvider
+│   ├── Intents/                    GenerateSpeechIntent + VoiceChoice 实体 + AppShortcutsProvider
+│   └── Core/WidgetShot.swift       仅 DEBUG：把小组件各尺寸离屏渲染成 PNG 自查
+├── BreezeWidgets/                  小组件扩展（com.apple.widgetkit-extension）
+│   ├── BreezeWidgetsBundle.swift   WidgetBundle 入口
+│   ├── HomeWidget.swift            桌面：小 / 中 / 大
+│   ├── LockWidget.swift            锁屏：圆形 / 矩形 / 行内
+│   └── WidgetCompat.swift          containerBackground 的版本兼容
+├── SharedWidgetUI/                 小组件版式，App 与扩展共用（纯 SwiftUI）
+│   ├── WidgetDesign.swift          配色、波形、入口胶囊、深链常量
+│   └── WidgetCards.swift           每个尺寸的卡片视图
+├── BreezeWidgets-Info.plist        扩展的 Info.plist（放在同步分组外，避免被当资源重复拷贝）
+├── BreezeSpeak-Info.plist          只为 CFBundleURLTypes 存在，其余键仍自动生成后合并
 └── Docs/screenshots/
 ```
 
@@ -240,8 +251,62 @@ BreezeSpeak/
 
 ---
 
-## 七、已知边界
+## 七、快捷指令与小组件
+
+### 快捷指令
+
+`GenerateSpeechIntent` 是标准 `AppIntent`：输入文本 / 声线 / 演绎指令，输出 WAV（`IntentFile`）。
+声线参数用 `AppEntity` + `EntityQuery` 做成了下拉列表，`suggestedEntities()` 直接把
+`VoiceStore.allVoices` 铺出来，克隆与造声的声线也在里面，不需要手打名字或 UUID。
+
+`AppShortcutsProvider` 提供三条免配置短语（「用 BreezeSpeak 生成播报」等），
+所以装完就能在 Siri 和 Spotlight 里直接调用，不必先去「快捷指令」里拼一个。
+
+执行时校验 `model.isReady`：权重没下载就直接抛 `modelNotReady`，
+不让用户等一次注定失败的引擎加载。
+
+### 小组件
+
+一个扩展里挂两套配置：
+
+| Widget | 支持的 family |
+| --- | --- |
+| `BreezeHomeWidget` | `systemSmall` / `systemMedium` / `systemLarge` |
+| `BreezeLockWidget` | `accessoryCircular` / `accessoryRectangular` / `accessoryInline` |
+
+版式代码放在 `SharedWidgetUI/`，**同时加入 App 与扩展两个 target 的同步分组**。
+这么做的好处是 App 里能用 `ImageRenderer` 把每种尺寸按真实大小画一遍
+（`-demo widget-shot`，产物在 `Documents/BreezeSpeak/Shots`），
+不用真把小组件摆到桌面上就能查文字溢出与留白。
+
+**内容边界**：扩展进程读不到 App 沙盒——App Groups 需要描述文件里有对应能力，
+而当前签名环境不支持（详见下面「已知边界」）。所以小组件不做数据展示，
+定位是「启动器 + 速查」：每个入口是一条 `breezespeak://` 深链，
+点「新建朗读」直接落进正文并聚焦输入框，点「声线库」「最近生成」直接开对应弹窗。
+
+锁屏刻意只显示品牌与波形，不放正文预览——锁屏是公共场合。
+
+### 深链
+
+| URL | 落点 |
+| --- | --- |
+| `breezespeak://compose` | 主界面，聚焦正文 |
+| `breezespeak://voices` | 声线库 |
+| `breezespeak://history` | 最近生成 |
+| `breezespeak://settings` | 设置 |
+
+跳转在 `AppEnvironment.open(_:)` 里统一处理。若当前已有弹层，先关再等 260ms 开目标弹层——
+同一次 runloop 里改两个 sheet 标志，SwiftUI 会当成一次变化，表现是新弹窗一闪就退回。
+
+---
+
+## 八、已知边界
+
 
 - 兜底引擎下 `[笑][叹气][咳嗽]` 只做停顿处理，无法真的笑出来——那是模型侧能力，接入真实 TTS 后自然生效。
 - `guidance_scale` 在兜底模式仅影响描述解析权重，不改变声学；真实推理时会原样传给模型。
 - 模拟器里 `os_proc_available_memory()` 恒返回 0，界面显示「约 xx GB」为「总量 − footprint」估算；真机是精确值。
+- 小组件与 App 之间没有共享容器：App Groups 要求描述文件里带该能力，而现有描述文件是显式 App ID
+  且不含 App Groups，签名环境也无法在线补注册。因此小组件按「启动器 + 速查」设计，
+  不展示最近文本、今日用量这类需要读 App 沙盒的内容。日后能开通 App Groups 时，
+  只需在扩展侧加一个 `UserDefaults(suiteName:)` 读取端，版式不用动。
